@@ -2,6 +2,7 @@
   "recommendations": [
     "ms-vscode.vscode-typescript-next",
     "dbaeumer.vscode-eslint",
-    "bradlc.vscode-tailwindcss"
+    "bradlc.vscode-tailwindcss",
+    "unifiedjs.vscode-mdx"
   ]
 }

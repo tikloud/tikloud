@@ -1,5 +1,3 @@
-import './button.css';
-
 export interface ButtonProps {
   /** Is this the principal call to action on the page? */
   primary?: boolean;
@@ -21,19 +19,28 @@ export const Button = ({
   label,
   ...props
 }: ButtonProps) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+  const baseClasses = 'font-sans font-medium rounded cursor-pointer border-0 inline-block leading-none transition-colors duration-200';
+  
+  const sizeClasses = {
+    small: 'text-xs py-2 px-4',
+    medium: 'text-sm py-3 px-5',
+    large: 'text-base py-3 px-6'
+  };
+
+  const variantClasses = primary 
+    ? 'text-white bg-blue-500 hover:bg-blue-600' 
+    : 'text-gray-800 bg-transparent shadow-gray-800 shadow-inner hover:bg-gray-100';
+
+  const buttonClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses}`;
+
   return (
     <button
       type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
+      className={buttonClasses}
+      style={{ backgroundColor }}
       {...props}
     >
       {label}
-      <style jsx>{`
-        button {
-          background-color: ${backgroundColor};
-        }
-      `}</style>
     </button>
   );
 };

@@ -30,6 +30,7 @@ jobs:
         run: npm run lint
 
   export:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository

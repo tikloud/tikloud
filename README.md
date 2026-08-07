@@ -97,9 +97,9 @@ Pushes to `main` (and `v*` tags) trigger the `Build and push Docker images`
 workflow (`.github/workflows/build-images.yml`), which builds `linux/amd64` +
 `linux/arm64` and publishes to GHCR:
 
-- `ghcr.io/tikloud/tikloud/dashboard` (`latest`, semver tags, `sha-*`)
-- `ghcr.io/tikloud/tikloud/landing-page`
-- `ghcr.io/tikloud/tikloud/docs`
+- `ghcr.io/tikloud/dashboard` (`latest`, semver tags, `sha-*`)
+- `ghcr.io/tikloud/landing-page`
+- `ghcr.io/tikloud/docs`
 
 The dashboard and landing-page builds require the `NEXT_PUBLIC_SUPABASE_URL`
 and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` repo secrets (Settings → Secrets

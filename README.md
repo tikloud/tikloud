@@ -95,8 +95,8 @@ docker compose up --build
 ### CI
 
 Pushes to `main` (and `v*` tags) trigger the `Build and push Docker images`
-workflow (`.github/workflows/build-images.yml`), which builds `linux/amd64` +
-`linux/arm64` and publishes to GHCR:
+workflow (`.github/workflows/build-images.yml`), which builds `linux/amd64`
+images and publishes to GHCR:
 
 - `ghcr.io/tikloud/dashboard` (`latest`, semver tags, `sha-*`)
 - `ghcr.io/tikloud/landing-page`

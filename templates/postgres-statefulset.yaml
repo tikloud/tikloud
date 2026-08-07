@@ -85,7 +85,6 @@ spec:
             {{- if .Values.postgres.persistence.enabled }}
             - name: data
               mountPath: /var/lib/postgresql/data
-              subPath: postgres
             {{- end }}
             {{- if .Values.keycloak.enabled }}
             - name: keycloak-db-init

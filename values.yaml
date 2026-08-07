@@ -210,7 +210,7 @@ services:
 # When enabled, renders a StatefulSet, ClusterIP Service, and a Secret with a
 # generated password (unless auth.existingSecret is provided).
 postgres:
-  enabled: false
+  enabled: true
   replicaCount: 1
   image:
     repository: postgres
@@ -258,7 +258,7 @@ postgres:
 # generated admin/database passwords (unless auth.existingSecret is provided),
 # and a Postgres init script that provisions the "keycloak" database + user.
 keycloak:
-  enabled: false
+  enabled: true
   replicaCount: 1
   image:
     repository: quay.io/keycloak/keycloak

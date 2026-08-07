@@ -89,7 +89,9 @@ spec:
             httpGet:
               path: /health/live
               port: management
-            initialDelaySeconds: 60
+            # The stock image rebuilds at startup on "start" (~1min build + JVM
+            # start); give the probe generous headroom before it can kill the pod.
+            initialDelaySeconds: 180
             periodSeconds: 10
       {{- with .Values.keycloak.nodeSelector }}
       nodeSelector:

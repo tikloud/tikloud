@@ -1,0 +1,51 @@
+---
+title: Architecture overview
+description: How the monorepo is laid out and how packages connect.
+order: 1
+---
+
+The repository is a Turborepo monorepo with two workspace scopes: `apps/*` and
+`packages/*`.
+
+```
+apps/            # the Next.js applications
+  dashboard/     #   control center (port 3000)
+  landing-page/  #   marketing site (port 3001)
+  docs/          #   documentation (port 3002)
+packages/        # shared libraries
+  ui/            #   design system (@repo/ui)
+  supabase/      #   client factory (@repo/supabase)
+  validation/    #   Zod schemas (@repo/validation)
+  eslint-config/ #   shared ESLint configs
+  typescript-config/ # shared tsconfigs
+supabase/        # SQL migrations
+docs/            # agent/engineering documentation
+```
+
+## How packages connect
+
+Apps import shared packages by name (`@repo/ui`, `@repo/supabase`, ...). Each
+package's `package.json` `exports` map points directly at source files, and
+TailwindCSS v4 discovers component classes via the `@source` directive in each
+app's `globals.css`.
+
+```
+apps/dashboard/app/globals.css
+  @import "tailwindcss";
+  @import "@repo/ui/styles";
+  @source "../../../packages/ui/src";
+```
+
+This is how design tokens and component class names from `@repo/ui` reach every
+app's compiled CSS.
+
+## Build orchestration
+
+`turbo.json` defines shared tasks — `build`, `lint`, `check-types`, `dev` —
+with dependencies between packages. `npm run build` from the root runs the
+whole graph, building dependencies before dependents.
+
+## TypeScript
+
+All packages extend shared configs from `@repo/typescript-config`
+(`base.json` for libraries, `nextjs.json` for apps) and are strict.

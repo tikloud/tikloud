@@ -1,0 +1,55 @@
+---
+title: Quickstart
+description: Install dependencies, run the apps locally, and configure environment variables.
+order: 2
+---
+
+This page gets the monorepo running on your machine.
+
+## Prerequisites
+
+- **Node.js** 20.9 or newer
+- **npm** 11.17 or newer
+- **Supabase credentials** if you plan to use the dashboard or landing page
+
+## Install and run
+
+```bash
+npm install
+npm run dev
+```
+
+`npm run dev` starts every app at once, each on its own port:
+
+```bash
+npm run dev:landing    # landing page only, on :3001
+npm run dev:dashboard  # dashboard only, on :3000
+npm run dev:docs       # docs only, on :3002
+```
+
+## Environment variables
+
+Supabase credentials live in each app's `.env.local` (gitignored). See
+`apps/<app>/.env.example` for the variable names:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+The **docs** app has no Supabase dependency and needs no environment variables.
+
+The database schema is versioned as SQL under `supabase/migrations/` — apply it
+via the Supabase SQL editor or the Supabase CLI.
+
+## Useful commands
+
+```bash
+npm run build        # build all apps and packages
+npm run lint         # eslint across the monorepo
+npm run check-types  # tsc --noEmit across the monorepo
+npm run format       # prettier write
+```
+
+<Callout variant="warning" title="CI runs the same commands">
+  Every push is linted, type-checked, and built before images are published. If
+  a command fails locally, it fails in CI too — run all three before pushing.
+</Callout>

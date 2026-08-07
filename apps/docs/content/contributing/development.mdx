@@ -1,0 +1,56 @@
+---
+title: Development
+description: Commands, conventions, and the contribution workflow.
+order: 1
+---
+
+Everything you need to contribute code to the monorepo.
+
+## Common commands
+
+```bash
+npm install         # install all workspace dependencies
+npm run dev         # run every app on its own port
+npm run build       # build all apps and packages
+npm run lint        # eslint across the monorepo
+npm run check-types # tsc --noEmit across the monorepo
+npm run format      # prettier write
+```
+
+Run a single workspace with `--filter`:
+
+```bash
+npm run dev --filter=docs
+npm run lint --filter=@repo/ui
+```
+
+## Conventions
+
+- **TypeScript is strict.** Shared configs come from `@repo/typescript-config`.
+- **Tailwind v4 tokens.** Never hardcode brand colors — use the `brand-*`
+  palette from `@repo/ui`.
+- **`cn()` for class merging.** Every component that accepts `className` uses
+  `cn()` from `@repo/ui`.
+- **Validation first.** All user input is validated with Zod schemas from
+  `@repo/validation` before touching Supabase.
+- **No domain logic in `@repo/ui`.** The design system stays framework and
+  auth-agnostic.
+
+## Before you push
+
+Run the same checks CI runs:
+
+```bash
+npm run lint
+npm run check-types
+npm run build
+```
+
+## Making a PR
+
+1. Create a branch off `main`.
+2. Make focused commits with clear messages.
+3. Open a PR against `main`. CI runs on every push — fix any failures it
+   reports.
+4. Merging to `main` triggers the image build and publish workflow (see
+   [CI](/deployment/ci)).

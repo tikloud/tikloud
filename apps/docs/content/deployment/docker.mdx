@@ -1,0 +1,45 @@
+---
+title: Docker
+description: Build targets, images, and build-time environment variables.
+order: 1
+---
+
+Every app ships as a Docker image built from the root `Dockerfile` via a
+**build target**, using Next.js standalone output for lean production images.
+
+## Images and targets
+
+| Image | Build target | Port |
+| --- | --- | --- |
+| `tikloud/dashboard` | `runner-dashboard` | 3000 |
+| `tikloud/landing-page` | `runner-landing-page` | 3001 |
+| `tikloud/docs` | `runner-docs` | 3002 |
+
+## Build-time env vars
+
+`NEXT_PUBLIC_*` variables are inlined at **build time**, so they are passed as
+build args. Supplying empty or missing values bakes empty strings into the
+image and breaks the Supabase auth middleware — the dashboard and landing page
+images **require** both args:
+
+```bash
+docker build \
+  --target runner-dashboard \
+  -t tikloud/dashboard \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=... \
+  --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=... \
+  .
+
+docker run -p 3000:3000 tikloud/dashboard
+```
+
+`docs` has no Supabase dependency and needs no build args.
+
+## Compose
+
+Run all three together with `docker compose`. Put the two Supabase variables in
+a root `.env` (or export them) and run:
+
+```bash
+docker compose up --build
+```

@@ -1,19 +1,24 @@
+import { SiteFooter, SiteHeader } from "@repo/ui";
+
 import { Cta } from "@/components/cta";
 import { Features } from "@/components/features";
-import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
-import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <SiteHeader
+        navItems={[
+          { href: "/#features", label: "Features" },
+          { href: "/waitlist", label: "Join the waitlist", variant: "button" },
+        ]}
+      />
       <main>
         <Hero />
         <Features />
         <Cta />
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

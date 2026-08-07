@@ -1,0 +1,81 @@
+---
+title: Writing docs
+description: How to add and edit pages on this documentation site.
+order: 2
+---
+
+This site is Markdown + MDX stored in `apps/docs/content/`. Each section is a
+folder; each page is an `.mdx` file.
+
+## Frontmatter
+
+Every page starts with a frontmatter block:
+
+```mdx
+---
+title: Writing docs
+description: How to add and edit pages on this documentation site.
+order: 2
+---
+```
+
+- `title` — shown in the page header, sidebar, and document title.
+- `description` — the subtitle under the title.
+- `order` — sort position within the section.
+
+The sidebar, breadcrumbs, and prev/next links are derived from these files
+automatically — no manual navigation edits needed.
+
+## Where pages live
+
+```
+apps/docs/content/
+  getting-started/
+    introduction.mdx
+    quickstart.mdx
+  apps/
+    overview.mdx
+    ...
+  architecture/
+  deployment/
+  contributing/
+  design-system/
+```
+
+## MDX components
+
+In addition to standard Markdown, these components are available inside pages:
+
+| Component | Purpose |
+| --- | --- |
+| `Callout` | Info / warning boxes (`variant` and optional `title`) |
+| `Badge`, `Button`, `Card` | Live UI for the design system reference |
+| `Heading`, `Separator` | Structural helpers |
+
+Links to other pages use normal relative Markdown links, e.g.
+`[Quickstart](/getting-started/quickstart)`.
+
+## Code blocks
+
+Fenced code blocks are syntax-highlighted with shiki. Just name the language:
+
+````mdx
+```tsx
+import { Button } from "@repo/ui";
+```
+````
+
+## Headings and the TOC
+
+`##` and `###` headings automatically become anchors (deep-linkable) and feed
+the **On this page** table of contents. Use one `#` heading only for the page
+title — it's rendered by the layout, not the content.
+
+## Preview
+
+```bash
+npm run dev --filter=docs
+```
+
+Open `http://localhost:3002`. New pages appear in the sidebar as soon as you
+save them.

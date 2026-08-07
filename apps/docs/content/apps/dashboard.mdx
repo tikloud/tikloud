@@ -1,0 +1,38 @@
+---
+title: Dashboard
+description: The authenticated control center for Ti Kloud organizations.
+order: 2
+---
+
+The dashboard is the auth'd control center. Once a user signs in, they land on
+an overview of their organization.
+
+## Routes
+
+- `/` — an overview page greeting the user by name with placeholder stat cards.
+- `/settings` — profile settings backed by the `profiles` table.
+- `/login` and `/register` — Supabase Auth flows.
+- `/auth/callback` — the OAuth redirect handler.
+
+## Auth flow
+
+The dashboard relies on `@repo/supabase`, which exposes three clients:
+
+- `@repo/supabase/server` — a server-side client used in layouts and actions.
+- `@repo/supabase/client` — a browser client used in client components.
+- `@repo/supabase/middleware` — a client for edge middleware.
+
+The `middleware.ts` file refreshes sessions and guards the `/dashboard`
+segment, while `app/(dashboard)/layout.tsx` redirects unauthenticated visitors
+to `/login`.
+
+## Forms
+
+Sign-up, sign-in, and profile forms are built with **React Hook Form** and
+**Zod**, sharing schemas from `@repo/validation`. See
+[Validation](/architecture/validation) for the schema layout.
+
+<Callout variant="info" title="Coming soon">
+  The overview cards currently show placeholders — real organization data will
+  populate them as services ship.
+</Callout>

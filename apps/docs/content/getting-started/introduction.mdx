@@ -1,0 +1,47 @@
+---
+title: Introduction
+description: What Ti Kloud is, what it ships, and how the monorepo is organised.
+order: 1
+---
+
+Ti Kloud is a platform that brings an organization's applications together on one
+foundation — authentication, databases, dashboards, and documentation that just
+work.
+
+This repository is a **Turborepo monorepo** that contains every Ti Kloud
+application and the shared packages they depend on.
+
+## What's in the repo
+
+The repo is split into two top-level workspaces:
+
+- **`apps/`** — the Next.js applications: the dashboard, the landing page, and
+  the docs you're reading right now.
+- **`packages/`** — shared libraries consumed by those apps: the design system,
+  the Supabase client factory, validation schemas, and shared lint/TypeScript
+  configs.
+
+Because every app builds from the same packages, a change to a shared component
+or token is reflected everywhere at once.
+
+## The apps at a glance
+
+| App | Purpose | Port |
+| --- | --- | --- |
+| **Dashboard** | Auth'd control center for your organization | 3000 |
+| **Landing page** | Public marketing site with a waitlist | 3001 |
+| **Docs** | Internal documentation (this site) | 3002 |
+
+## The tech stack
+
+- **Turborepo** — build orchestration across the monorepo
+- **Next.js** — all web apps (App Router, React 19)
+- **TailwindCSS** — v4, with shared tokens via `@repo/ui`
+- **Supabase** — auth, database, and storage (Postgres)
+- **React Hook Form + Zod** — form state and schema validation
+- **TypeScript** — strict, shared configs
+
+<Callout variant="info" title="New here?">
+  Head over to [Quickstart](/getting-started/quickstart) to get the monorepo
+  running on your machine in a few minutes.
+</Callout>

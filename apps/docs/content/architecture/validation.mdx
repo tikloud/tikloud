@@ -1,0 +1,32 @@
+---
+title: Validation
+description: Shared Zod schemas in @repo/validation.
+order: 4
+---
+
+`@repo/validation` holds the Zod schemas used across the apps so a single
+source of truth describes each domain shape.
+
+## What's inside
+
+- **Auth** — sign-up and sign-in payloads (email, password, display name).
+- **Waitlist** — the landing page waitlist entry.
+- **Profile** — profile updates for the dashboard settings page.
+
+## Usage
+
+Schemas are imported directly from the package and used with React Hook Form's
+resolver:
+
+```tsx
+import { waitlistSchema } from "@repo/validation";
+
+// inside a server action or resolver
+const parsed = waitlistSchema.safeParse(input);
+if (!parsed.success) {
+  return { error: parsed.error.flatten().fieldErrors };
+}
+```
+
+Because validation lives in a package rather than duplicated per app, the
+dashboard, landing page, and any future app share identical rules.

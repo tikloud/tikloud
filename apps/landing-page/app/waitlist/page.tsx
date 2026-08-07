@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container, Heading } from "@repo/ui";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container, Heading, SiteFooter, SiteHeader } from "@repo/ui";
 
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
 import { WaitlistForm } from "@/components/waitlist-form";
 
 export const metadata: Metadata = {
@@ -15,7 +13,12 @@ export const metadata: Metadata = {
 export default function WaitlistPage() {
   return (
     <>
-      <Navbar />
+      <SiteHeader
+        navItems={[
+          { href: "/#features", label: "Features" },
+          { href: "/waitlist", label: "Join the waitlist", variant: "button" },
+        ]}
+      />
       <main className="bg-gradient-to-b from-brand-50 via-white to-white">
         <Container className="flex flex-col items-center py-24">
           <div className="mx-auto max-w-xl text-center">
@@ -38,7 +41,7 @@ export default function WaitlistPage() {
           </Card>
         </Container>
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

@@ -33,6 +33,7 @@ npm install
 npm run dev            # runs every app (each on its own port)
 npm run dev:landing    # landing page only
 npm run dev:dashboard  # dashboard only
+npm run dev:docs       # docs only
 ```
 
 ### Environment variables

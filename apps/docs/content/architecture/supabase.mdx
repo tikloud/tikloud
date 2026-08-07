@@ -1,0 +1,47 @@
+---
+title: Supabase
+description: The @repo/supabase client factory, migrations, and security.
+order: 3
+---
+
+Supabase provides auth, Postgres, and storage. The repo wraps it in a single
+package, `@repo/supabase`, that exposes three clients so the right one is used
+in the right runtime.
+
+## Client factory
+
+- `@repo/supabase/server` — for server components, server actions, and route
+  handlers. Uses cookies for auth.
+- `@repo/supabase/client` — for browser-side client components.
+- `@repo/supabase/middleware` — for edge middleware (session refresh).
+
+```tsx
+// app/(dashboard)/layout.tsx
+import { createClient } from "@repo/supabase/server";
+
+const supabase = await createClient();
+const { data: { user } } = await supabase.auth.getUser();
+```
+
+## Environment variables
+
+| Variable | Used by |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | all Supabase apps |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | all Supabase apps |
+
+These are inlined at **build time**, so they must be present when building
+production images. The docs app does not use Supabase.
+
+## Migrations
+
+The schema is versioned as SQL under `supabase/migrations/`. Apply via the
+Supabase SQL editor or the Supabase CLI. The `profiles` table holds display
+name data linked to auth users.
+
+## Security
+
+- Publishable keys stay safe on the client by design.
+- **Row-level security** policies are expected on every table.
+- Server actions validate input with Zod (see
+  [Validation](/architecture/validation)) before touching the database.

@@ -1,0 +1,32 @@
+---
+title: Docs
+description: This site — how it works and how to add a page.
+order: 4
+---
+
+The docs app is the internal documentation site you're reading right now. It
+has **no Supabase dependency** — content is static Markdown + MDX rendered at
+build time.
+
+## How it works
+
+Content lives as `.mdx` files under `apps/docs/content/<section>/`. A server-only
+loader (`lib/content.ts`) reads those files, parses their frontmatter, and
+builds the navigation tree — so the sidebar, breadcrumbs, and prev/next links
+stay in sync automatically.
+
+Pages are rendered from a single dynamic route (`app/(docs)/[...slug]/page.tsx`)
+that is fully static at build time via `generateStaticParams`.
+
+## Stack
+
+- `next-mdx-remote-client` — compiles MDX to server components.
+- `gray-matter` — frontmatter parsing.
+- `remark-gfm` — GitHub-flavored Markdown (tables, strikethrough).
+- `@shikijs/rehype` — syntax-highlighted code blocks.
+- `rehype-slug` / `rehype-autolink-headings` — heading anchors for deep links.
+
+## Add a page
+
+See [Writing docs](/contributing/writing-docs) for the full guide, including
+frontmatter fields and the components available inside MDX.

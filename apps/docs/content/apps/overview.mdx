@@ -1,0 +1,40 @@
+---
+title: Apps overview
+description: The three Ti Kloud applications and how they relate.
+order: 1
+---
+
+Ti Kloud currently ships three Next.js applications, all built on the App Router
+with React 19 and TailwindCSS v4.
+
+## Where apps live
+
+Each app is a folder under `apps/` and is a workspace in its own right, with its
+own `package.json`, routes, and fonts. The shared design system lives in
+`packages/ui` and is imported as `@repo/ui`.
+
+## Ports
+
+| App | Dev port | Purpose |
+| --- | --- | --- |
+| Dashboard | 3000 | Auth'd control center |
+| Landing page | 3001 | Public marketing site |
+| Docs | 3002 | Internal documentation |
+
+## Shared foundation
+
+All three apps import the same primitives from `@repo/ui` — buttons, cards,
+headers, sidebars, and the brand color tokens — so they share a consistent
+look and feel. Changes to `@repo/ui` propagate to every app on the next build.
+
+## Docker and Kubernetes
+
+Every app has a Docker image built from the root `Dockerfile` via a build
+target, using Next.js standalone output for lean production images. See
+[Deployment & ops](/deployment/docker) for details.
+
+| App | Build target | Image |
+| --- | --- | --- |
+| Dashboard | `runner-dashboard` | `tikloud/dashboard` |
+| Landing page | `runner-landing-page` | `tikloud/landing-page` |
+| Docs | `runner-docs` | `tikloud/docs` |

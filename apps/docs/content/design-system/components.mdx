@@ -1,0 +1,133 @@
+---
+title: Components
+description: Live examples of every primitive in @repo/ui.
+order: 2
+---
+
+All components accept standard React props plus `className`, and merge classes
+with `cn()` from `@repo/ui`.
+
+## Button
+
+```tsx
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="destructive">Destructive</Button>
+```
+
+<Button>Primary</Button>{" "}
+<Button variant="secondary">Secondary</Button>{" "}
+<Button variant="outline">Outline</Button>{" "}
+<Button variant="ghost">Ghost</Button>{" "}
+<Button variant="destructive">Destructive</Button>
+
+Sizes are `sm`, `md` (default), and `lg`.
+
+<Button size="sm">Small</Button>{" "}
+<Button size="md">Medium</Button>{" "}
+<Button size="lg">Large</Button>
+
+## Badge
+
+```tsx
+<Badge>Default</Badge>
+<Badge variant="secondary">Secondary</Badge>
+<Badge variant="outline">Outline</Badge>
+<Badge variant="success">Success</Badge>
+<Badge variant="warning">Warning</Badge>
+```
+
+<Badge>Default</Badge>{" "}
+<Badge variant="secondary">Secondary</Badge>{" "}
+<Badge variant="outline">Outline</Badge>{" "}
+<Badge variant="success">Success</Badge>{" "}
+<Badge variant="warning">Warning</Badge>
+
+## Card
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Database</CardTitle>
+    <CardDescription>One healthy Postgres instance</CardDescription>
+  </CardHeader>
+  <CardContent>Status: running</CardContent>
+</Card>
+```
+
+<Card>
+  <CardHeader>
+    <CardTitle>Database</CardTitle>
+    <CardDescription>One healthy Postgres instance</CardDescription>
+  </CardHeader>
+  <CardContent>Status: running</CardContent>
+</Card>
+
+## Heading
+
+`Heading` renders an `h1`–`h6` with a consistent type scale.
+
+```tsx
+<Heading level={2}>Section title</Heading>
+```
+
+<Heading level={2}>Section title</Heading>
+
+## Forms
+
+`Input`, `Textarea`, and `Label` follow the same focus ring (`ring-brand-500`)
+and support an `invalid` flag for validation errors.
+
+```tsx
+<Label htmlFor="email">Email</Label>
+<Input id="email" type="email" placeholder="you@example.com" />
+<Textarea placeholder="A longer response..." />
+```
+
+<Label htmlFor="email">Email</Label>
+<Input id="email" type="email" placeholder="you@example.com" className="mt-2" />
+<Textarea placeholder="A longer response..." className="mt-2" />
+
+## Callout
+
+```tsx
+<Callout variant="warning" title="Careful">
+  Something to watch out for.
+</Callout>
+```
+
+<Callout variant="info" title="Info">
+  Useful context, no action required.
+</Callout>
+
+<Callout variant="success" title="Done">
+  This is what success looks like.
+</Callout>
+
+<Callout variant="warning" title="Careful">
+  Something to watch out for.
+</Callout>
+
+<Callout variant="danger" title="Stop">
+  This can break things.
+</Callout>
+
+## Separator
+
+```tsx
+<Separator />
+```
+
+<Separator />
+
+## Container, Prose, and layout
+
+- `Container` — a `max-w-7xl` centered wrapper with responsive padding.
+- `Prose` — typographic styling for rendered Markdown/MDX content (this page).
+- `Toc` — the **On this page** navigation seen on wide screens.
+- `SiteHeader` / `SiteFooter` — the sticky platform header and footer.
+- `Sidebar` / `SidebarNav` / `SidebarNavLink` — left navigation shells (used by
+  the dashboard and this site).
+- `Breadcrumbs` — the breadcrumb trail at the top of each doc page.

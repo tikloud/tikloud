@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# Ti Kloud Docs
 
-## Getting Started
+The internal documentation site for Ti Kloud. Content is Markdown + MDX stored
+under `content/` and rendered at build time — no Supabase dependency.
 
-First, run the development server:
+## Running
 
 ```bash
-npm run dev
+npm run dev:docs   # from the repo root
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev        # from apps/docs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open <http://localhost:3002>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Adding a page
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+1. Create `content/<section>/<slug>.mdx` with frontmatter:
 
-## Learn More
+   ```mdx
+   ---
+   title: My page
+   description: Short subtitle shown under the title.
+   order: 1
+   ---
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Write the body in Markdown/MDX. `Callout`, `Badge`, `Button`, `Card`,
+   `Heading`, and `Separator` are available as components.
+3. The sidebar, breadcrumbs, and prev/next links update automatically.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See `content/contributing/writing-docs.mdx` for the full guide.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stack
 
-## Deploy on Vercel
+- `next-mdx-remote-client` — MDX → server components
+- `gray-matter` — frontmatter
+- `remark-gfm`, `rehype-slug`, `rehype-autolink-headings`
+- `@shikijs/rehype` — syntax highlighting
+- `@repo/ui` — design system (layout, `Prose`, `Toc`, `Callout`, etc.)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Building
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build   # from apps/docs
+```
+
+All doc pages are prerendered as static HTML at build time.

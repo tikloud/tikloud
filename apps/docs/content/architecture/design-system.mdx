@@ -1,0 +1,76 @@
+---
+title: Design system
+description: How @repo/ui is structured, themed, and consumed.
+order: 2
+---
+
+`@repo/ui` is the shared design system. It provides the Tailwind v4 theme
+tokens, the `cn()` utility, and the UI primitives every Ti Kloud app renders
+with.
+
+## Tokens
+
+Tailwind v4 tokens are declared in `packages/ui/src/styles.css` inside an
+`@theme` block. The brand palette is a teal scale:
+
+```css
+@theme {
+  --color-brand-50: #f0fbfa;
+  --color-brand-500: #35a5a0;
+  --color-brand-600: #288685;
+  --color-brand-900: #1f4949;
+}
+```
+
+This makes utilities like `bg-brand-600`, `text-brand-700`, and
+`ring-brand-500` available in every app that imports the styles.
+
+## Utilities
+
+`cn()` merges `clsx` and `tailwind-merge` so callers can override a primitive's
+default classes without class-order bugs:
+
+```tsx
+import { cn } from "@repo/ui";
+
+<Button className={cn("w-full", className)}>
+```
+
+## Primitives
+
+The package exports:
+
+- **Forms** — `Input`, `Textarea`, `Label`
+- **Content** — `Heading`, `Prose`, `Callout`, `Separator`, `Toc`
+- **Navigation** — `SiteHeader`, `SiteFooter`, `Sidebar`, `SidebarNav`,
+  `SidebarNavLink`, `Breadcrumbs`
+- **Feedback & layout** — `Badge`, `Button`, `Card`, `Container`
+
+Every primitive accepts standard React props plus `className`, and follows the
+`cn()` convention. See the [Design system reference](/design-system/components)
+for live examples.
+
+## Export surface
+
+`packages/ui/package.json` maps each component to its own subpath (for example
+`@repo/ui/button`) in addition to the barrel `@repo/ui`, so apps can import
+either way:
+
+```tsx
+import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/button";
+```
+
+## Adding a component
+
+1. Create `packages/ui/src/<name>.tsx` using the `cn()` pattern.
+2. Add a subpath to the `exports` map in `package.json`.
+3. Re-export it from `src/index.ts`.
+4. Because of the `@source` directive, no build step is needed for consumers —
+   just use it.
+
+<Callout variant="warning" title="Keep the design system clean">
+  `@repo/ui` must stay free of Supabase and domain logic. Dashboard-specific
+  pieces (like sign-out) live in the dashboard and slot into the shared
+  components via props like `Sidebar`'s `footer`.
+</Callout>

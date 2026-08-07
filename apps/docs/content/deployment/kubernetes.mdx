@@ -1,0 +1,32 @@
+---
+title: Kubernetes
+description: The Helm chart, ingress, and TLS for the platform.
+order: 2
+---
+
+The platform deploys to Kubernetes via a Helm chart at the repo root.
+
+## Chart layout
+
+- `Chart.yaml` — chart metadata.
+- `values.yaml` — shared defaults.
+- `charts/` — subcharts, one per app.
+- `templates/` — shared templates such as ingress.
+
+## Ingress
+
+Each app exposes an ingress. Traffic terminates TLS via **cert-manager**, and
+HTTP is redirected to HTTPS for every app. The Traefik ingress middleware used
+for redirects is referenced with its namespace-qualified name.
+
+## Versioned releases
+
+The Helm chart is versioned independently of the app images. Deploying a new
+chart revision (or a new image tag) is a normal `helm upgrade` — see the chart
+for the current release workflow.
+
+<Callout variant="info" title="Operators">
+  Day-to-day deployment operations — applying the chart, rotating images, and
+  troubleshooting ingress — belong on the platform operators' runbook rather
+  than these docs.
+</Callout>

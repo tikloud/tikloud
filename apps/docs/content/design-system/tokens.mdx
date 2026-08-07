@@ -1,0 +1,59 @@
+---
+title: Tokens
+description: Brand palette, fonts, and the Tailwind v4 theme.
+order: 1
+---
+
+All design tokens are defined once in `packages/ui/src/styles.css` and shared
+by every app via `@import "@repo/ui/styles"`.
+
+## Brand palette
+
+The brand is a **teal** scale used for actions, links, and emphasis. Use the
+`brand-*` utilities — never hardcode hex values in components.
+
+| Token | Hex | Usage |
+| --- | --- | --- |
+| `brand-50` | `#f0fbfa` | Subtle backgrounds, hover states |
+| `brand-100` | `#d5f5f1` | Soft fills, secondary buttons |
+| `brand-200` | `#aeeae4` | Borders, callout fills |
+| `brand-300` | `#7fd9d2` | Outline borders |
+| `brand-400` | `#4fc0ba` | — |
+| `brand-500` | `#35a5a0` | Focus rings, accents |
+| `brand-600` | `#288685` | Primary buttons, links |
+| `brand-700` | `#256c6c` | Hover states |
+| `brand-800` | `#215757` | — |
+| `brand-900` | `#1f4949` | Dark panels (e.g. CTA) |
+| `brand-950` | `#0d2a2b` | — |
+
+## Neutrals
+
+The design uses the Tailwind **slate** scale for text, borders, and surfaces:
+
+- `slate-900` — headings and primary text.
+- `slate-600` / `slate-500` — body text and secondary text.
+- `slate-200` / `slate-100` — borders and subtle fills.
+- `bg-white` — default surface.
+
+## Typography
+
+- **Geist Sans** — the UI font (`--font-geist-sans`).
+- **Geist Mono** — code and monospace (`--font-geist-mono`).
+
+Both are loaded per-app with `next/font/local` and wired to Tailwind's
+`--font-sans` / `--font-mono` theme variables.
+
+## Semantics
+
+Status colors use Tailwind's built-in scales:
+
+| Meaning | Scale |
+| --- | --- |
+| Success | `emerald` |
+| Warning | `amber` |
+| Danger / destructive | `red` |
+
+<Callout variant="info" title="Adding a token">
+  Add tokens in `styles.css` inside the `@theme` block. They become Tailwind
+  utilities in every app automatically.
+</Callout>

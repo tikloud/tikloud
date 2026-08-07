@@ -7,9 +7,14 @@ metadata:
   name: {{ include "tikloud.serviceFullname" $ctx }}
   labels:
     {{- include "tikloud.serviceLabels" $ctx | nindent 4 }}
-  {{- with $service.ingress.annotations }}
+  {{- if or $service.ingress.annotations (and $.Values.redirectHttpToHttps $service.ingress.tls) }}
   annotations:
+    {{- with $service.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if and $.Values.redirectHttpToHttps $service.ingress.tls }}
+    traefik.io/router.middlewares: {{ include "tikloud.fullname" $ }}-redirect-https@kubernetescrd
+    {{- end }}
   {{- end }}
 spec:
   {{- with $service.ingress.className }}

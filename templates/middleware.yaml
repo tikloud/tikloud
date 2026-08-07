@@ -1,0 +1,12 @@
+{{- if .Values.redirectHttpToHttps }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "tikloud.fullname" . }}-redirect-https
+  labels:
+    {{- include "tikloud.labels" . | nindent 4 }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+{{- end }}

@@ -10,7 +10,9 @@ image:
   # Repository prefix. A service without its own image.repository resolves to
   # "<global repository>/<service name>" (e.g. ghcr.io/tikloud/dashboard).
   repository: ghcr.io/tikloud
-  pullPolicy: IfNotPresent
+  # Always is used because the default tag is the mutable "latest" tag; IfNotPresent
+  # would leave nodes running a stale cached image after a rebuild.
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 

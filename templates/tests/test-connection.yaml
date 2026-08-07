@@ -1,0 +1,21 @@
+{{- range $service := .Values.services }}
+{{- if $service.enabled }}
+{{- $ctx := dict "root" $ "service" $service }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "tikloud.serviceFullname" $ctx }}-test-connection"
+  labels:
+    {{- include "tikloud.serviceLabels" $ctx | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "tikloud.serviceFullname" $ctx }}:{{ $service.service.port | default 80 }}']
+  restartPolicy: Never
+---
+{{- end }}
+{{- end }}

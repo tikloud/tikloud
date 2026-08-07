@@ -1,0 +1,193 @@
+# Default values for tikloud.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global default replica count. Overridable per service.
+replicaCount: 1
+
+# Global image defaults. Per-service image.repository/tag/pullPolicy override these.
+image:
+  # Repository prefix. A service without its own image.repository resolves to
+  # "<global repository>/<service name>" (e.g. ghcr.io/tikloud/dashboard).
+  repository: ghcr.io/tikloud
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created.
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account.
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Each entry in the list renders a Deployment + Service (+ optional Ingress/HPA).
+# NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are baked into
+# the images at build time, so no runtime secrets are required.
+services:
+  - name: dashboard
+    enabled: true
+    # Optional override: image.repository, image.tag, image.pullPolicy
+    # image:
+    #   repository: ghcr.io/tikloud/dashboard
+    #   tag: ""
+    containerPort: 3000
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: http
+    ingress:
+      enabled: true
+      className: ""
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      host: dashboard.tikloud.org
+      path: /
+      pathType: Prefix
+      tls: []
+        # - secretName: dashboard-tls
+        #   hosts:
+        #     - dashboard.tikloud.org
+    replicaCount: 1
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+    resources: {}
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+    # Extra environment variables injected into the container.
+    env: []
+    # envFrom: []
+    # Additional volumes on the output Deployment definition.
+    volumes: []
+      # - name: foo
+      #   secret:
+      #     secretName: mysecret
+      #     optional: false
+    # Additional volumeMounts on the output Deployment definition.
+    volumeMounts: []
+      # - name: foo
+      #   mountPath: "/etc/foo"
+      #   readOnly: true
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  - name: landing-page
+    enabled: true
+    containerPort: 3001
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: http
+    ingress:
+      enabled: true
+      className: ""
+      annotations: {}
+      host: tikloud.org
+      path: /
+      pathType: Prefix
+      tls: []
+    replicaCount: 1
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+    resources: {}
+    env: []
+    volumes: []
+    volumeMounts: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  - name: docs
+    enabled: true
+    containerPort: 3002
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: http
+    ingress:
+      enabled: true
+      className: ""
+      annotations: {}
+      host: docs.tikloud.org
+      path: /
+      pathType: Prefix
+      tls: []
+    replicaCount: 1
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+    resources: {}
+    env: []
+    volumes: []
+    volumeMounts: []
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}

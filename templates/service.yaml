@@ -1,0 +1,21 @@
+{{- range $service := .Values.services }}
+{{- if $service.enabled }}
+{{- $ctx := dict "root" $ "service" $service }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tikloud.serviceFullname" $ctx }}
+  labels:
+    {{- include "tikloud.serviceLabels" $ctx | nindent 4 }}
+spec:
+  type: {{ $service.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ $service.service.port | default 80 }}
+      targetPort: {{ $service.service.targetPort | default "http" }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "tikloud.serviceSelectorLabels" $ctx | nindent 4 }}
+---
+{{- end }}
+{{- end }}

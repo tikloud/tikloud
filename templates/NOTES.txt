@@ -1,0 +1,25 @@
+1. Get the application URLs by running these commands:
+{{- range $service := .Values.services }}
+{{- if and $service.enabled $service.ingress.enabled }}
+  {{- $proto := "http" }}
+  {{- if $service.ingress.tls }}
+    {{- $proto = "https" }}
+  {{- end }}
+  {{ $service.name }}: {{ $proto }}://{{ $service.ingress.host }}{{ $service.ingress.path | default "/" }}
+{{- end }}
+{{- end }}
+
+{{- $first := dict }}
+{{- range $service := .Values.services }}
+{{- if and $service.enabled (not $first) }}
+{{- $first = $service }}
+{{- end }}
+{{- end }}
+{{- if $first }}
+
+To port-forward the first enabled service directly:
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ $first.name }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT={{ $first.containerPort }}
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+{{- end }}

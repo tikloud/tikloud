@@ -205,3 +205,47 @@ services:
     nodeSelector: {}
     tolerations: []
     affinity: {}
+
+# Postgres database deployed alongside the apps (Supabase stays as-is).
+# When enabled, renders a StatefulSet, ClusterIP Service, and a Secret with a
+# generated password (unless auth.existingSecret is provided).
+postgres:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: postgres
+    # Image tag; a mutable "latest" would leave nodes running stale images, so
+    # pin an explicit major version.
+    tag: "16"
+    pullPolicy: IfNotPresent
+  auth:
+    # Database and role created on first boot by the postgres entrypoint.
+    database: tikloud
+    username: tikloud
+    # Name of the Secret rendered by this chart. Defaults to
+    # "<release>-tikloud-postgres". Ignored if existingSecret is set.
+    secretName: ""
+    # Use a pre-existing Secret instead of the generated one.
+    existingSecret: ""
+    # Key inside existingSecret holding the password.
+    passwordKey: password
+  port: 5432
+  persistence:
+    enabled: true
+    # Reuse an existing PVC instead of provisioning a volumeClaimTemplate.
+    existingClaim: ""
+    size: 8Gi
+    storageClass: ""
+  service:
+    type: ClusterIP
+    port: 5432
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

@@ -110,3 +110,38 @@ Expects a dict with keys "root" and "service".
 {{- $tag := $image.tag | default $.Values.image.tag | default $.Chart.AppVersion }}
 {{- printf "%s:%s" $repo $tag }}
 {{- end }}
+
+{{/*
+Create a default fully qualified name for the Postgres instance.
+*/}}
+{{- define "tikloud.postgresFullname" -}}
+{{- printf "%s-%s" (include "tikloud.fullname" .) "postgres" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Selector labels for the Postgres instance.
+*/}}
+{{- define "tikloud.postgresSelectorLabels" -}}
+app.kubernetes.io/name: postgres
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Common labels for the Postgres instance.
+*/}}
+{{- define "tikloud.postgresLabels" -}}
+helm.sh/chart: {{ include "tikloud.chart" . }}
+{{ include "tikloud.postgresSelectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/component: postgres
+{{- end }}
+
+{{/*
+Name of the Secret holding the Postgres password.
+*/}}
+{{- define "tikloud.postgresSecretName" -}}
+{{- default (default (include "tikloud.postgresFullname" .) .Values.postgres.auth.secretName) .Values.postgres.auth.existingSecret }}
+{{- end }}

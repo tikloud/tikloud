@@ -23,3 +23,10 @@ To port-forward the first enabled service directly:
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+{{- if .Values.postgres.enabled }}
+
+Postgres is deployed at {{ include "tikloud.postgresFullname" . }}:{{ .Values.postgres.service.port | default 5432 }}.
+  DB:        {{ .Values.postgres.auth.database }}
+  User:      {{ .Values.postgres.auth.username }}
+  Password:  kubectl get secret --namespace {{ .Release.Namespace }} {{ include "tikloud.postgresSecretName" . }} -o jsonpath="{.data.{{ .Values.postgres.auth.passwordKey | default "password" }}}" | base64 -d
+{{- end }}

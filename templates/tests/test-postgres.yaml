@@ -1,0 +1,17 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "tikloud.postgresFullname" . }}-test-connection"
+  labels:
+    {{- include "tikloud.postgresLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: pg-isready
+      image: {{ printf "%s:%s" .Values.postgres.image.repository .Values.postgres.image.tag | quote }}
+      command: ['pg_isready']
+      args: ['-h', '{{ include "tikloud.postgresFullname" . }}', '-p', '{{ .Values.postgres.port | default 5432 }}', '-U', '{{ .Values.postgres.auth.username }}']
+  restartPolicy: Never
+{{- end }}

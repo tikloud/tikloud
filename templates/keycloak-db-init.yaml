@@ -1,0 +1,16 @@
+{{- if and .Values.keycloak.enabled .Values.postgres.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.keycloak.database.initScriptName | default "keycloak-db-init" }}
+  labels:
+    {{- include "tikloud.keycloakLabels" . | nindent 4 }}
+data:
+  01-keycloak.sh: |
+    #!/bin/bash
+    set -e
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+        CREATE ROLE {{ .Values.keycloak.database.username }} LOGIN PASSWORD '$KEYCLOAK_DB_PASSWORD';
+        CREATE DATABASE {{ .Values.keycloak.database.name }} OWNER {{ .Values.keycloak.database.username }};
+    EOSQL
+{{- end }}

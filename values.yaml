@@ -249,3 +249,68 @@ postgres:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+# Keycloak (self-hosted identity and access management), deployed alongside the
+# apps and Supabase. Keycloak is stateless; it stores its data in a dedicated
+# "keycloak" database on the chart's Postgres instance (created on first boot of
+# a fresh Postgres data directory). Requires postgres.enabled to be true.
+# When enabled, renders a Deployment, ClusterIP Service, Ingress, Secret with
+# generated admin/database passwords (unless auth.existingSecret is provided),
+# and a Postgres init script that provisions the "keycloak" database + user.
+keycloak:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: quay.io/keycloak/keycloak
+    # Pinned stable release; a mutable tag would leave nodes running stale images.
+    tag: "26.7.1"
+    pullPolicy: IfNotPresent
+  auth:
+    # Initial admin user, created on first boot from KC_BOOTSTRAP_ADMIN_*.
+    adminUser: admin
+    # Use a pre-existing Secret instead of the generated one.
+    existingSecret: ""
+    # Key inside existingSecret holding the admin password.
+    adminPasswordKey: admin-password
+    # Key inside existingSecret holding the Keycloak database password.
+    dbPasswordKey: db-password
+  database:
+    # Database and role created on the chart's Postgres instance.
+    name: keycloak
+    username: keycloak
+    # Name of the ConfigMap rendering the init script into the Postgres pod.
+    initScriptName: keycloak-db-init
+  httpPort: 8080
+  managementPort: 9000
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      cert-manager.io/cluster-issuer: lets-encrypt
+    host: auth.tikloud.org
+    path: /
+    pathType: Prefix
+    tls:
+      - secretName: keycloak-tls
+        hosts:
+          - auth.tikloud.org
+  # Keycloak's JVM heap scales with the container memory limit (docs recommend
+  # always setting one, ~2Gi for production deployments).
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 2Gi
+  # Extra arguments appended to "kc.sh start". TLS terminates at the ingress, so
+  # Keycloak serves HTTP internally and trusts the proxy for forwarded headers.
+  args: []
+  # Extra environment variables injected into the container (KC_* settings).
+  extraEnv: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

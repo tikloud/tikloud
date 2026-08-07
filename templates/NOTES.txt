@@ -30,3 +30,9 @@ Postgres is deployed at {{ include "tikloud.postgresFullname" . }}:{{ .Values.po
   User:      {{ .Values.postgres.auth.username }}
   Password:  kubectl get secret --namespace {{ .Release.Namespace }} {{ include "tikloud.postgresSecretName" . }} -o jsonpath="{.data.{{ .Values.postgres.auth.passwordKey | default "password" }}}" | base64 -d
 {{- end }}
+{{- if .Values.keycloak.enabled }}
+
+Keycloak is available at {{ .Values.keycloak.ingress.host }} (admin console at /admin).
+  Admin user:  {{ .Values.keycloak.auth.adminUser | default "admin" }}
+  Password:    kubectl get secret --namespace {{ .Release.Namespace }} {{ include "tikloud.keycloakSecretName" . }} -o jsonpath="{.data.{{ .Values.keycloak.auth.adminPasswordKey | default "admin-password" }}}" | base64 -d
+{{- end }}

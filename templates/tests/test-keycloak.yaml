@@ -1,0 +1,17 @@
+{{- if .Values.keycloak.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "tikloud.keycloakFullname" . }}-test-connection"
+  labels:
+    {{- include "tikloud.keycloakLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['--spider', '{{ include "tikloud.keycloakFullname" . }}:{{ .Values.keycloak.managementPort | default 9000 }}/health/ready']
+  restartPolicy: Never
+{{- end }}

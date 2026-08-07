@@ -1,0 +1,106 @@
+{{- if .Values.keycloak.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tikloud.keycloakFullname" . }}
+  labels:
+    {{- include "tikloud.keycloakLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.keycloak.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "tikloud.keycloakSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "tikloud.keycloakLabels" . | nindent 8 }}
+        {{- with $.Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: keycloak
+          image: {{ printf "%s:%s" .Values.keycloak.image.repository .Values.keycloak.image.tag | quote }}
+          imagePullPolicy: {{ .Values.keycloak.image.pullPolicy | default "IfNotPresent" }}
+          args:
+            - start
+            - --http-enabled=true
+            - --proxy-headers=xforwarded
+            {{- range .Values.keycloak.args }}
+            - {{ . | quote }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.keycloak.httpPort | default 8080 }}
+              protocol: TCP
+            - name: management
+              containerPort: {{ .Values.keycloak.managementPort | default 9000 }}
+              protocol: TCP
+          env:
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: {{ .Values.keycloak.auth.adminUser | default "admin" | quote }}
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tikloud.keycloakSecretName" . }}
+                  key: {{ .Values.keycloak.auth.adminPasswordKey | default "admin-password" }}
+            - name: KC_DB
+              value: "postgres"
+            - name: KC_DB_URL
+              value: {{ printf "jdbc:postgresql://%s:%d/%s" (include "tikloud.postgresFullname" .) (int (.Values.postgres.service.port | default 5432)) .Values.keycloak.database.name | quote }}
+            - name: KC_DB_USERNAME
+              value: {{ .Values.keycloak.database.username | quote }}
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tikloud.keycloakSecretName" . }}
+                  key: {{ .Values.keycloak.auth.dbPasswordKey | default "db-password" }}
+            - name: KC_HOSTNAME
+              value: {{ .Values.keycloak.ingress.host | quote }}
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            {{- with .Values.keycloak.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with .Values.keycloak.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: management
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: management
+            initialDelaySeconds: 60
+            periodSeconds: 10
+      {{- with .Values.keycloak.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.keycloak.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.keycloak.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

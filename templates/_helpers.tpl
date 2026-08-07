@@ -145,3 +145,38 @@ Name of the Secret holding the Postgres password.
 {{- define "tikloud.postgresSecretName" -}}
 {{- default (default (include "tikloud.postgresFullname" .) .Values.postgres.auth.secretName) .Values.postgres.auth.existingSecret }}
 {{- end }}
+
+{{/*
+Create a default fully qualified name for the Keycloak instance.
+*/}}
+{{- define "tikloud.keycloakFullname" -}}
+{{- printf "%s-%s" (include "tikloud.fullname" .) "keycloak" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Selector labels for the Keycloak instance.
+*/}}
+{{- define "tikloud.keycloakSelectorLabels" -}}
+app.kubernetes.io/name: keycloak
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Common labels for the Keycloak instance.
+*/}}
+{{- define "tikloud.keycloakLabels" -}}
+helm.sh/chart: {{ include "tikloud.chart" . }}
+{{ include "tikloud.keycloakSelectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/component: keycloak
+{{- end }}
+
+{{/*
+Name of the Secret holding the Keycloak credentials.
+*/}}
+{{- define "tikloud.keycloakSecretName" -}}
+{{- default (include "tikloud.keycloakFullname" .) .Values.keycloak.auth.existingSecret }}
+{{- end }}

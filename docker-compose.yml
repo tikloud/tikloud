@@ -1,0 +1,39 @@
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner-dashboard
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  landing-page:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner-landing-page
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:-}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:-}
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner-docs
+    ports:
+      - "3002:3002"
+    restart: unless-stopped

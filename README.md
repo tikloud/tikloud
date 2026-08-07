@@ -54,3 +54,39 @@ npm run lint         # eslint across the monorepo
 npm run check-types  # tsc --noEmit across the monorepo
 npm run format       # prettier write
 ```
+
+## Docker
+
+Each app has a Docker image built from the root `Dockerfile` via a build target,
+using Next.js standalone output for lean production images.
+
+| Image | Build target | Port |
+| --- | --- | --- |
+| `tikloud/dashboard` | `runner-dashboard` | 3000 |
+| `tikloud/landing-page` | `runner-landing-page` | 3001 |
+| `tikloud/docs` | `runner-docs` | 3002 |
+
+`NEXT_PUBLIC_*` variables are inlined at **build time**, so pass them as build
+args when the app uses Supabase. Supplying empty or missing values bakes empty
+strings into the image and breaks the Supabase auth middleware — the dashboard
+and landing page images **require** both args:
+
+```sh
+docker build \
+  --target runner-dashboard \
+  -t tikloud/dashboard \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=... \
+  --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=... \
+  .
+
+docker run -p 3000:3000 tikloud/dashboard
+```
+
+Run all three together with compose. Put `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in a root `.env` (or export them) and:
+
+```sh
+docker compose up --build
+```
+
+`docs` has no Supabase dependency and needs no build args.

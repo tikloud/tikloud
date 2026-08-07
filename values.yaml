@@ -290,13 +290,13 @@ keycloak:
     className: ""
     annotations:
       cert-manager.io/cluster-issuer: lets-encrypt
-    host: auth.tikloud.org
+    host: keycloak.tikloud.org
     path: /
     pathType: Prefix
     tls:
       - secretName: keycloak-tls
         hosts:
-          - auth.tikloud.org
+          - keycloak.tikloud.org
   # Keycloak's JVM heap scales with the container memory limit (docs recommend
   # always setting one, ~2Gi for production deployments).
   resources:

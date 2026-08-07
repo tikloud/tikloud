@@ -120,8 +120,13 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: data
+        # Version-stable labels only: stamping helm.sh/chart (which embeds the
+        # chart version) here would change the immutable volumeClaimTemplates
+        # field on every chart bump and break ArgoCD patching.
         labels:
-          {{- include "tikloud.postgresLabels" . | nindent 10 }}
+          app.kubernetes.io/name: postgres
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/component: postgres
       spec:
         accessModes: ["ReadWriteOnce"]
         {{- with .Values.postgres.persistence.storageClass }}

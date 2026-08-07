@@ -4,6 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:landing": "turbo run dev --filter=landing-page",
+    "dev:dashboard": "turbo run dev --filter=dashboard",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
@@ -14,7 +16,7 @@
     "typescript": "5.9.2"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9.0"
   },
   "devEngines": {
     "packageManager": {

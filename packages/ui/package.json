@@ -3,7 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    ".": "./src/index.ts",
+    "./styles": "./src/styles.css",
+    "./utils": "./src/utils.ts",
+    "./icons": "./src/icons.ts",
+    "./button": "./src/button.tsx",
+    "./card": "./src/card.tsx",
+    "./badge": "./src/badge.tsx",
+    "./input": "./src/input.tsx",
+    "./label": "./src/label.tsx",
+    "./textarea": "./src/textarea.tsx",
+    "./container": "./src/container.tsx",
+    "./heading": "./src/heading.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -20,7 +31,10 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.525.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.3.0"
   }
 }

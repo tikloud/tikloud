@@ -84,7 +84,7 @@ services:
         - secretName: dashboard-tls
           hosts:
             - dashboard.tikloud.org
-    replicaCount: 1
+    replicaCount: 3
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -143,7 +143,7 @@ services:
         - secretName: landing-page-tls
           hosts:
             - tikloud.org
-    replicaCount: 1
+    replicaCount: 3
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -184,7 +184,7 @@ services:
         - secretName: docs-tls
           hosts:
             - docs.tikloud.org
-    replicaCount: 1
+    replicaCount: 3
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -259,7 +259,7 @@ postgres:
 # and a Postgres init script that provisions the "keycloak" database + user.
 keycloak:
   enabled: true
-  replicaCount: 1
+  replicaCount: 3
   image:
     repository: quay.io/keycloak/keycloak
     # Pinned stable release; a mutable tag would leave nodes running stale images.

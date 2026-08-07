@@ -32,9 +32,7 @@ export default async function SettingsPage() {
     <div className="flex flex-col gap-8">
       <div>
         <Heading level={1}>Settings</Heading>
-        <p className="mt-2 text-slate-600">
-          Manage your account details.
-        </p>
+        <p className="mt-2 text-slate-600">Manage your account details.</p>
       </div>
 
       <Card className="max-w-lg">

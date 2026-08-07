@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Container, Heading, SiteFooter, SiteHeader } from "@repo/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Container,
+  Heading,
+  SiteFooter,
+  SiteHeader,
+} from "@repo/ui";
 
 import { WaitlistForm } from "@/components/waitlist-form";
 
 export const metadata: Metadata = {
   title: "Join the waitlist",
-  description:
-    "Get early access to the Ti Kloud platform — join the waitlist.",
+  description: "Get early access to the Ti Kloud platform — join the waitlist.",
 };
 
 export default function WaitlistPage() {

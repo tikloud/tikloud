@@ -1,7 +1,8 @@
 import type { ComponentProps } from "react";
 import { cn } from "./utils";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
+type ButtonVariant =
+  "primary" | "secondary" | "outline" | "ghost" | "destructive";
 type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps extends ComponentProps<"button"> {
@@ -16,7 +17,8 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-brand-100 text-brand-900 hover:bg-brand-200 focus-visible:ring-brand-500 disabled:hover:bg-brand-100",
   outline:
     "border border-brand-300 bg-transparent text-brand-900 hover:bg-brand-50 focus-visible:ring-brand-500 disabled:hover:bg-transparent",
-  ghost: "text-brand-900 hover:bg-brand-50 focus-visible:ring-brand-500 disabled:hover:bg-transparent",
+  ghost:
+    "text-brand-900 hover:bg-brand-50 focus-visible:ring-brand-500 disabled:hover:bg-transparent",
   destructive:
     "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 disabled:hover:bg-red-600",
 };

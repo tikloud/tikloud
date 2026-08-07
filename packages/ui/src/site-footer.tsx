@@ -16,7 +16,10 @@ export function SiteFooter({
   ...props
 }: SiteFooterProps) {
   return (
-    <footer className={cn("border-t border-slate-200 py-12", className)} {...props}>
+    <footer
+      className={cn("border-t border-slate-200 py-12", className)}
+      {...props}
+    >
       <Container>
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {brand ?? (

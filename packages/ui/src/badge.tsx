@@ -15,7 +15,11 @@ const variantClasses: Record<BadgeVariant, string> = {
   warning: "bg-amber-100 text-amber-800",
 };
 
-export function Badge({ variant = "default", className, ...props }: BadgeProps) {
+export function Badge({
+  variant = "default",
+  className,
+  ...props
+}: BadgeProps) {
   return (
     <span
       className={cn(

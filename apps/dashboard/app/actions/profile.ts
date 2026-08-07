@@ -6,10 +6,11 @@ import { createClient } from "@repo/supabase/server";
 import { profileSchema } from "@repo/validation/profile";
 
 export type UpdateProfileResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };
 
-export async function updateProfile(input: unknown): Promise<UpdateProfileResult> {
+export async function updateProfile(
+  input: unknown,
+): Promise<UpdateProfileResult> {
   const parsed = profileSchema.safeParse(input);
 
   if (!parsed.success) {

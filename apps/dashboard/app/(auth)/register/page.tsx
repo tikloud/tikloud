@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui";
 
 import { RegisterForm } from "@/components/register-form";
 
@@ -22,7 +28,10 @@ export default function RegisterPage() {
         <RegisterForm />
         <p className="mt-6 text-center text-sm text-slate-500">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-brand-700 hover:underline">
+          <Link
+            href="/login"
+            className="font-medium text-brand-700 hover:underline"
+          >
             Sign in
           </Link>
         </p>

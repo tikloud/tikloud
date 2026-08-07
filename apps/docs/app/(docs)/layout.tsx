@@ -17,7 +17,10 @@ export default function DocsLayout({
     <div className="flex min-h-screen flex-col">
       <SiteHeader
         brand={
-          <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-semibold"
+          >
             <Cloud className="size-6 text-brand-600" />
             <span>Ti Kloud Docs</span>
           </Link>

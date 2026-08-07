@@ -50,7 +50,9 @@ export function ProfileForm({ initialName }: { initialName: string }) {
           invalid={Boolean(errors.name)}
           {...register("name")}
         />
-        {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-sm text-red-600">{errors.name.message}</p>
+        )}
       </div>
       {serverError && <p className="text-sm text-red-600">{serverError}</p>}
       <div className="flex items-center gap-3">

@@ -55,8 +55,9 @@ export function RegisterForm() {
         <CheckCircle2 className="size-10 text-brand-600" />
         <p className="text-lg font-semibold text-slate-900">Check your inbox</p>
         <p className="text-sm text-slate-600">
-          We sent a confirmation link to <span className="font-medium">{checkEmail}</span>.
-          Click it to finish setting up your account.
+          We sent a confirmation link to{" "}
+          <span className="font-medium">{checkEmail}</span>. Click it to finish
+          setting up your account.
         </p>
       </div>
     );
@@ -74,7 +75,9 @@ export function RegisterForm() {
           invalid={Boolean(errors.name)}
           {...register("name")}
         />
-        {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-sm text-red-600">{errors.name.message}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
@@ -86,7 +89,9 @@ export function RegisterForm() {
           invalid={Boolean(errors.email)}
           {...register("email")}
         />
-        {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-red-600">{errors.email.message}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">Password</Label>

@@ -9,10 +9,19 @@ export interface SidebarProps extends ComponentProps<"aside"> {
   footer?: ReactNode;
 }
 
-export function Sidebar({ brand, footer, className, children, ...props }: SidebarProps) {
+export function Sidebar({
+  brand,
+  footer,
+  className,
+  children,
+  ...props
+}: SidebarProps) {
   return (
     <aside
-      className={cn("flex w-64 flex-col border-r border-slate-200 bg-white", className)}
+      className={cn(
+        "flex w-64 flex-col border-r border-slate-200 bg-white",
+        className,
+      )}
       {...props}
     >
       <div className="flex h-16 items-center gap-2 border-b border-slate-200 px-6 font-semibold">
@@ -30,10 +39,18 @@ export function Sidebar({ brand, footer, className, children, ...props }: Sideba
 }
 
 export function SidebarNav({ className, ...props }: ComponentProps<"nav">) {
-  return <nav className={cn("flex flex-1 flex-col gap-1 p-4", className)} {...props} />;
+  return (
+    <nav
+      className={cn("flex flex-1 flex-col gap-1 p-4", className)}
+      {...props}
+    />
+  );
 }
 
-export interface SidebarNavLinkProps extends Omit<ComponentProps<typeof Link>, "href"> {
+export interface SidebarNavLinkProps extends Omit<
+  ComponentProps<typeof Link>,
+  "href"
+> {
   href: string;
   icon?: ReactNode;
   active?: boolean;

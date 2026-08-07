@@ -47,7 +47,9 @@ export function LoginForm({ next }: { next: string }) {
           invalid={Boolean(errors.email)}
           {...register("email")}
         />
-        {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-red-600">{errors.email.message}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">Password</Label>

@@ -1,5 +1,11 @@
 import { Card, CardContent, Container, Heading } from "@repo/ui";
-import { BarChart3, Database, KeyRound, ShieldCheck, Zap } from "@repo/ui/icons";
+import {
+  BarChart3,
+  Database,
+  KeyRound,
+  ShieldCheck,
+  Zap,
+} from "@repo/ui/icons";
 
 const features = [
   {
@@ -57,7 +63,9 @@ export function Features() {
                 <div className="mb-4 inline-flex size-11 items-center justify-center rounded-lg bg-brand-100 text-brand-700">
                   <Icon className="size-5" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {title}
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">
                   {description}
                 </p>

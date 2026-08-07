@@ -17,7 +17,8 @@ export const metadata: Metadata = {
     default: "Ti Kloud Docs",
     template: "%s | Ti Kloud Docs",
   },
-  description: "Documentation for the Ti Kloud platform — apps, architecture, deployment, and contributing.",
+  description:
+    "Documentation for the Ti Kloud platform — apps, architecture, deployment, and contributing.",
 };
 
 export default function RootLayout({

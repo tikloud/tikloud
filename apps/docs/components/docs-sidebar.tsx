@@ -24,7 +24,9 @@ export function DocsSidebar({ nav }: { nav: NavSection[] }) {
         >
           <Menu className="size-5" />
         </button>
-        <span className="text-sm font-semibold text-slate-900">Ti Kloud Docs</span>
+        <span className="text-sm font-semibold text-slate-900">
+          Ti Kloud Docs
+        </span>
       </div>
 
       <Sidebar
@@ -35,7 +37,10 @@ export function DocsSidebar({ nav }: { nav: NavSection[] }) {
         )}
         brand={
           <div className="flex w-full items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-lg font-semibold"
+            >
               <Cloud className="size-6 text-brand-600" />
               <span>Ti Kloud Docs</span>
             </Link>

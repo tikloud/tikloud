@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs, Prose } from "@repo/ui";
 
 import { DocFooter } from "@/components/doc-footer";
-import { getAllSlugs, getDoc, getDocNavigation, getSectionTitle } from "@/lib/content";
+import {
+  getAllSlugs,
+  getDoc,
+  getDocNavigation,
+  getSectionTitle,
+} from "@/lib/content";
 import { renderMdx } from "@/lib/mdx";
 
 interface DocPageProps {
@@ -15,7 +20,9 @@ export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug: slug.split("/") }));
 }
 
-export async function generateMetadata({ params }: DocPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: DocPageProps): Promise<Metadata> {
   const { slug } = await params;
   const result = getDoc(slug.join("/"));
 

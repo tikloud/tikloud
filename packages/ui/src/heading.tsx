@@ -18,5 +18,7 @@ const sizes: Record<HeadingLevel, string> = {
 
 export function Heading({ level = 1, className, ...props }: HeadingProps) {
   const Tag = `h${level}` as const;
-  return <Tag className={cn("text-slate-900", sizes[level], className)} {...props} />;
+  return (
+    <Tag className={cn("text-slate-900", sizes[level], className)} {...props} />
+  );
 }

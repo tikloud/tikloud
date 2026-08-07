@@ -85,16 +85,24 @@ function extractHeadings(source: string): TocItem[] {
 
 function loadDoc(filePath: string): { doc: Doc; source: string } {
   const relative = path.relative(contentRoot, filePath);
-  const slug = relative.replace(/\.mdx$/, "").split(path.sep).join("/");
+  const slug = relative
+    .replace(/\.mdx$/, "")
+    .split(path.sep)
+    .join("/");
   const section = slug.split("/")[0] ?? "";
 
   const source = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(source);
 
   const frontmatter: DocFrontmatter = {
-    title: typeof data.title === "string" ? data.title : slug.split("/").at(-1) ?? slug,
-    description: typeof data.description === "string" ? data.description : undefined,
-    order: typeof data.order === "number" ? data.order : Number.MAX_SAFE_INTEGER,
+    title:
+      typeof data.title === "string"
+        ? data.title
+        : (slug.split("/").at(-1) ?? slug),
+    description:
+      typeof data.description === "string" ? data.description : undefined,
+    order:
+      typeof data.order === "number" ? data.order : Number.MAX_SAFE_INTEGER,
   };
 
   return {
@@ -133,7 +141,9 @@ export function getNavTree(): NavSection[] {
 }
 
 export function getSectionTitle(sectionId: string): string {
-  return sectionDefinitions.find(({ id }) => id === sectionId)?.title ?? sectionId;
+  return (
+    sectionDefinitions.find(({ id }) => id === sectionId)?.title ?? sectionId
+  );
 }
 
 export function getAllSlugs(): string[] {
@@ -151,9 +161,10 @@ export function getDoc(slug: string): { doc: Doc; source: string } | null {
   return loadDoc(filePath);
 }
 
-export function getDocNavigation(
-  slug: string,
-): { prev: NavDoc | null; next: NavDoc | null } {
+export function getDocNavigation(slug: string): {
+  prev: NavDoc | null;
+  next: NavDoc | null;
+} {
   const flat = getSections().flatMap((section) =>
     section.docs.map((doc) => ({
       slug: doc.slug,
@@ -165,7 +176,7 @@ export function getDocNavigation(
   if (index === -1) return { prev: null, next: null };
 
   return {
-    prev: index > 0 ? flat[index - 1] ?? null : null,
-    next: index < flat.length - 1 ? flat[index + 1] ?? null : null,
+    prev: index > 0 ? (flat[index - 1] ?? null) : null,
+    next: index < flat.length - 1 ? (flat[index + 1] ?? null) : null,
   };
 }

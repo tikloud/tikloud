@@ -20,8 +20,8 @@ export function Hero() {
           Cloud infrastructure, simplified for your team
         </Heading>
         <p className="mt-6 max-w-2xl text-lg text-slate-600">
-          Ti Kloud brings your organization&apos;s apps together on one platform —
-          authentication, databases, and dashboards that just work.
+          Ti Kloud brings your organization&apos;s apps together on one platform
+          — authentication, databases, and dashboards that just work.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
           <Link

@@ -13,11 +13,11 @@ Monorepo managing all applications for the Ti Kloud organization.
 
 ## Apps
 
-| App | Path | Port | Purpose |
-| --- | --- | --- | --- |
-| Dashboard | `apps/dashboard` | 3000 | Auth'd control center |
-| Landing page | `apps/landing-page` | 3001 | Public marketing site |
-| Docs | `apps/docs` | 3002 | Internal documentation |
+| App          | Path                | Port | Purpose                |
+| ------------ | ------------------- | ---- | ---------------------- |
+| Dashboard    | `apps/dashboard`    | 3000 | Auth'd control center  |
+| Landing page | `apps/landing-page` | 3001 | Public marketing site  |
+| Docs         | `apps/docs`         | 3002 | Internal documentation |
 
 ## Packages
 
@@ -61,11 +61,11 @@ npm run format       # prettier write
 Each app has a Docker image built from the root `Dockerfile` via a build target,
 using Next.js standalone output for lean production images.
 
-| Image | Build target | Port |
-| --- | --- | --- |
-| `tikloud/dashboard` | `runner-dashboard` | 3000 |
+| Image                  | Build target          | Port |
+| ---------------------- | --------------------- | ---- |
+| `tikloud/dashboard`    | `runner-dashboard`    | 3000 |
 | `tikloud/landing-page` | `runner-landing-page` | 3001 |
-| `tikloud/docs` | `runner-docs` | 3002 |
+| `tikloud/docs`         | `runner-docs`         | 3002 |
 
 `NEXT_PUBLIC_*` variables are inlined at **build time**, so pass them as build
 args when the app uses Supabase. Supplying empty or missing values bakes empty
@@ -94,9 +94,9 @@ docker compose up --build
 
 ### CI
 
-Pushes to `main` (and `v*` tags) trigger the `Build and push Docker images`
-workflow (`.github/workflows/build-images.yml`), which builds `linux/amd64`
-images and publishes to GHCR:
+Pushes to `main` (and `v*` tags) trigger the **Docker CI** workflow
+(`.github/workflows/docker-ci.yml`), which builds `linux/amd64` images and
+publishes to GHCR:
 
 - `ghcr.io/tikloud/dashboard` (`latest`, semver tags, `sha-*`)
 - `ghcr.io/tikloud/landing-page`

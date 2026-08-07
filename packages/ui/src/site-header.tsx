@@ -10,7 +10,10 @@ export type SiteHeaderLink = {
   variant?: "link" | "button";
 };
 
-export interface SiteHeaderProps extends Omit<ComponentProps<"header">, "children"> {
+export interface SiteHeaderProps extends Omit<
+  ComponentProps<"header">,
+  "children"
+> {
   brand?: ReactNode;
   navItems?: SiteHeaderLink[];
 }

@@ -16,9 +16,7 @@ export default async function OverviewPage() {
   } = await supabase.auth.getUser();
 
   const displayName =
-    user?.user_metadata.full_name ??
-    user?.email?.split("@")[0] ??
-    "there";
+    user?.user_metadata.full_name ?? user?.email?.split("@")[0] ?? "there";
 
   const stats = [
     { label: "Team members", value: "—", icon: Users },

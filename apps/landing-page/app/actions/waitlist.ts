@@ -6,10 +6,11 @@ import { createClient } from "@repo/supabase/server";
 import { waitlistSchema } from "@repo/validation/waitlist";
 
 export type JoinWaitlistResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };
 
-export async function joinWaitlist(input: unknown): Promise<JoinWaitlistResult> {
+export async function joinWaitlist(
+  input: unknown,
+): Promise<JoinWaitlistResult> {
   const parsed = waitlistSchema.safeParse(input);
 
   if (!parsed.success) {

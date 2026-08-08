@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@repo/ui";
 
-import { LoginForm } from "@/components/login-form";
+import { SignInButton } from "@/components/sign-in-button";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -31,7 +31,7 @@ export default async function LoginPage({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <LoginForm next={next ?? "/"} />
+        <SignInButton next={next ?? "/"} />
         <p className="mt-6 text-center text-sm text-slate-500">
           New to Ti Kloud?{" "}
           <Link

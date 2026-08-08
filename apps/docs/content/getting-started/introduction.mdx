@@ -18,8 +18,8 @@ The repo is split into two top-level workspaces:
 - **`apps/`** — the Next.js applications: the dashboard, the landing page, and
   the docs you're reading right now.
 - **`packages/`** — shared libraries consumed by those apps: the design system,
-  the Supabase client factory, validation schemas, and shared lint/TypeScript
-  configs.
+  the Keycloak auth client, Postgres query helpers, validation schemas, and
+  shared lint/TypeScript configs.
 
 Because every app builds from the same packages, a change to a shared component
 or token is reflected everywhere at once.
@@ -37,7 +37,8 @@ or token is reflected everywhere at once.
 - **Turborepo** — build orchestration across the monorepo
 - **Next.js** — all web apps (App Router, React 19)
 - **TailwindCSS** — v4, with shared tokens via `@repo/ui`
-- **Supabase** — auth, database, and storage (Postgres)
+- **Keycloak** — self-hosted OIDC auth (login, registration, logout)
+- **Postgres** — accessed directly via the `pg` driver
 - **React Hook Form + Zod** — form state and schema validation
 - **TypeScript** — strict, shared configs
 

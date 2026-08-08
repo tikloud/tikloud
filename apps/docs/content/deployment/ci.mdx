@@ -4,15 +4,13 @@ description: How images are built, tested, and published to GHCR.
 order: 3
 ---
 
-Pushes to `main` (and `v*` tags) trigger the **Build and push Docker images**
-workflow (`.github/workflows/build-images.yml`).
+Pushes to `main` (and `v*` tags) trigger the **Docker CI** workflow
+(`.github/workflows/docker-ci.yml`).
 
 ## What it does
 
-1. Builds `linux/amd64` + `linux/arm64` images for all three apps via a build
-   matrix.
-2. Validates that the Supabase secrets are set (skipped for the docs image).
-3. Publishes to GitHub Container Registry (GHCR):
+1. Builds `linux/amd64` images for all three apps via a build matrix.
+2. Publishes to GitHub Container Registry (GHCR):
 
 | Image | Tags |
 | --- | --- |
@@ -20,14 +18,10 @@ workflow (`.github/workflows/build-images.yml`).
 | `ghcr.io/tikloud/landing-page` | `latest`, semver tags, `sha-*` |
 | `ghcr.io/tikloud/docs` | `latest`, semver tags, `sha-*` |
 
-## Required secrets
+## Secrets
 
-The dashboard and landing-page builds require these repo secrets
-(Settings → Secrets and variables → Actions). The workflow fails if they are
-unset, because empty values produce a broken auth image:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+No secrets are required at build time — Keycloak and Postgres credentials are
+runtime environment variables injected by the Helm chart at deploy time.
 
 ## Caching
 

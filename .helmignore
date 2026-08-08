@@ -24,7 +24,6 @@
 # Monorepo sources (the chart only ships templates + values)
 apps/
 packages/
-supabase/
 .github/
 docs/
 node_modules/
@@ -34,4 +33,3 @@ package-lock.json
 turbo.json
 npm-shrinkwrap.json
 Dockerfile
-docker-compose.yml

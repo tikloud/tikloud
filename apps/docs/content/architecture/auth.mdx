@@ -1,0 +1,68 @@
+---
+title: Authentication
+description: Keycloak OIDC auth via @repo/auth and the signed session cookie.
+order: 3
+---
+
+Authentication is delegated to a self-hosted **Keycloak** instance (OpenID
+Connect). The repo wraps the OIDC flow in a single package, `@repo/auth`, with
+two entry points for the runtimes that need it.
+
+## How it works
+
+1. `/auth/login` builds an authorization URL (PKCE) and redirects to Keycloak's
+   login (or registration) page.
+2. Keycloak redirects back to `/auth/callback`, which exchanges the code and
+   mints a signed session cookie.
+3. `proxy.ts` verifies that cookie on the edge and guards routes.
+4. Server components and actions call `getSession()` / `requireUser()` to read
+   the signed-in user.
+
+## Session cookie
+
+The session is an `httpOnly` cookie (`tikloud.session`) holding a `jose` JWT
+signed with `AUTH_SECRET`. It carries the Keycloak `sub`, `email`, and `name`
+claims. The edge verifies the signature only — no network or database call at
+request time.
+
+## Package entry points
+
+- `@repo/auth/server` — Node runtime (route handlers, server components,
+  actions): PKCE login/logout URLs, code exchange, `getSession()`,
+  `requireUser()`.
+- `@repo/auth/edge` — edge runtime (`proxy.ts`): `isAuthenticated(request)`.
+
+```tsx
+// app/(dashboard)/layout.tsx
+import { requireUser } from "@repo/auth/server";
+
+const user = await requireUser();
+```
+
+## Environment variables
+
+| Variable | Used by |
+| --- | --- |
+| `KEYCLOAK_URL` | dashboard |
+| `KEYCLOAK_REALM` | dashboard |
+| `KEYCLOAK_CLIENT_ID` | dashboard |
+| `KEYCLOAK_CLIENT_SECRET` | dashboard |
+| `AUTH_SECRET` | dashboard (session signing) |
+| `AUTH_URL` | dashboard (public base URL for OIDC redirects) |
+
+These are server-side only and read at **runtime**, so they are never baked
+into images.
+
+## Keycloak setup
+
+The Helm chart deploys Keycloak and imports a realm (`tikloud`) with a
+confidential client (`dashboard`) and self-registration enabled on first boot —
+see `templates/auth-secret.yaml`. The admin console is available at the
+Keycloak ingress for any overrides.
+
+## Security
+
+- PKCE is used on every authorization code flow.
+- The OIDC state cookie is signed to prevent open-redirect tampering of `next`.
+- Sessions are validated server-side (`requireUser`) in addition to the edge
+  guard.

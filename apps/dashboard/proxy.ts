@@ -1,25 +1,27 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { updateSession } from "@repo/supabase/middleware";
+import { isAuthenticated } from "@repo/auth/edge";
 
 export async function proxy(request: NextRequest) {
-  const { response, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  const authenticated = await isAuthenticated(request);
 
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/register");
+  const isOidcRoute = pathname.startsWith("/auth/");
 
-  if (!user && !isAuthRoute) {
+  if (!authenticated && !isAuthRoute && !isOidcRoute) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (user && isAuthRoute) {
+  if (authenticated && isAuthRoute) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return response;
+  return NextResponse.next({ request });
 }
 
 export const config = {

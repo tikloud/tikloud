@@ -180,3 +180,44 @@ Name of the Secret holding the Keycloak credentials.
 {{- define "tikloud.keycloakSecretName" -}}
 {{- default (include "tikloud.keycloakFullname" .) .Values.keycloak.auth.existingSecret }}
 {{- end }}
+
+{{/*
+Name of the Secret holding the app auth secrets (session signing secret,
+Keycloak client secret, and the Keycloak realm import JSON).
+*/}}
+{{- define "tikloud.authSecretName" -}}
+{{- default (printf "%s-%s" (include "tikloud.fullname" .) "auth") .Values.auth.existingSecret }}
+{{- end }}
+
+{{/*
+Realm JSON imported by Keycloak on first boot. Expects a dict with "root" (the
+chart context) and "clientSecret" (the generated client secret).
+*/}}
+{{- define "tikloud.authRealmJson" -}}
+{{- $ := index . "root" }}
+{{- $clientSecret := index . "clientSecret" }}
+{{- $realm := $.Values.keycloak.realm }}
+{
+  "realm": {{ default "tikloud" $realm.name | quote }},
+  "enabled": true,
+  "registrationAllowed": {{ default true $realm.registrationAllowed }},
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "verifyEmail": false,
+  "sslRequired": "external",
+  "clients": [
+    {
+      "clientId": {{ default "dashboard" $realm.client.clientId | quote }},
+      "enabled": true,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": {{ $clientSecret | quote }},
+      "standardFlowEnabled": true,
+      "publicClient": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": {{ default (list "https://dashboard.tikloud.org/auth/callback") $realm.client.redirectUris | toJson }},
+      "webOrigins": []
+    }
+  ]
+}
+{{- end }}

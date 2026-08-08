@@ -58,8 +58,9 @@ securityContext: {}
 redirectHttpToHttps: true
 
 # Each entry in the list renders a Deployment + Service (+ optional Ingress/HPA).
-# NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are baked into
-# the images at build time, so no runtime secrets are required.
+# Runtime environment variables (Postgres, Keycloak, AUTH_SECRET) are injected
+# by templates/deployment.yaml into the dashboard and landing-page containers
+# from the secrets rendered by this chart, so no build-time values are required.
 services:
   - name: dashboard
     enabled: true
@@ -206,7 +207,7 @@ services:
     tolerations: []
     affinity: {}
 
-# Postgres database deployed alongside the apps (Supabase stays as-is).
+# Postgres database deployed alongside the apps.
 # When enabled, renders a StatefulSet, ClusterIP Service, and a Secret with a
 # generated password (unless auth.existingSecret is provided).
 postgres:
@@ -239,6 +240,12 @@ postgres:
   service:
     type: ClusterIP
     port: 5432
+  schema:
+    # When enabled, applies the application schema (profiles, waitlist) via a
+    # Postgres init script on first boot of a fresh data directory.
+    enabled: true
+    # Name of the ConfigMap rendering the init script into the Postgres pod.
+    initScriptName: tikloud-schema-init
   resources: {}
     # limits:
     #   cpu: 500m
@@ -251,12 +258,14 @@ postgres:
   affinity: {}
 
 # Keycloak (self-hosted identity and access management), deployed alongside the
-# apps and Supabase. Keycloak is stateless; it stores its data in a dedicated
-# "keycloak" database on the chart's Postgres instance (created on first boot of
-# a fresh Postgres data directory). Requires postgres.enabled to be true.
+# apps. Keycloak is stateless; it stores its data in a dedicated "keycloak"
+# database on the chart's Postgres instance (created on first boot of a fresh
+# Postgres data directory). Requires postgres.enabled to be true.
 # When enabled, renders a Deployment, ClusterIP Service, Ingress, Secret with
 # generated admin/database passwords (unless auth.existingSecret is provided),
 # and a Postgres init script that provisions the "keycloak" database + user.
+# The app realm + client are imported automatically on first boot from a
+# realm.json rendered into the auth Secret (see templates/auth-secret.yaml).
 keycloak:
   enabled: true
   replicaCount: 3
@@ -265,6 +274,18 @@ keycloak:
     # Pinned stable release; a mutable tag would leave nodes running stale images.
     tag: "26.7.1"
     pullPolicy: IfNotPresent
+  realm:
+    # Realm provisioned for the apps. The dashboard's OpenID Connect client is
+    # imported here; self-registration is delegated to Keycloak's login pages.
+    name: tikloud
+    registrationAllowed: true
+    client:
+      clientId: dashboard
+      # Must stay in sync with AUTH_URL (templates/deployment.yaml appends
+      # "/auth/callback"). Add local redirect URIs (e.g. http://localhost:3000)
+      # here when developing against a cluster-hosted Keycloak.
+      redirectUris:
+        - https://dashboard.tikloud.org/auth/callback
   auth:
     # Initial admin user, created on first boot from KC_BOOTSTRAP_ADMIN_*.
     adminUser: admin
@@ -314,3 +335,11 @@ keycloak:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
+# Secrets shared by the apps and Keycloak: the session-cookie signing secret,
+# the Keycloak client secret, and the realm import JSON. Rendered by
+# templates/auth-secret.yaml when existingSecret is empty.
+auth:
+  # Use a pre-existing Secret instead of the generated one. When set, it must
+  # contain the keys auth-secret, keycloak-client-secret, and realm.json.
+  existingSecret: ""

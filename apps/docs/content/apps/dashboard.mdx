@@ -11,26 +11,28 @@ an overview of their organization.
 
 - `/` — an overview page greeting the user by name with placeholder stat cards.
 - `/settings` — profile settings backed by the `profiles` table.
-- `/login` and `/register` — Supabase Auth flows.
-- `/auth/callback` — the OAuth redirect handler.
+- `/login` and `/register` — Keycloak-hosted flows (the pages just redirect to
+  Keycloak).
+- `/auth/login`, `/auth/callback`, `/auth/logout` — the OpenID Connect flow.
 
 ## Auth flow
 
-The dashboard relies on `@repo/supabase`, which exposes three clients:
+The dashboard relies on `@repo/auth`, which exposes two entry points:
 
-- `@repo/supabase/server` — a server-side client used in layouts and actions.
-- `@repo/supabase/client` — a browser client used in client components.
-- `@repo/supabase/middleware` — a client for edge middleware.
+- `@repo/auth/server` — PKCE login/logout URLs, code exchange, `getSession()`,
+  `requireUser()`.
+- `@repo/auth/edge` — `isAuthenticated()` for the route guard.
 
-The `middleware.ts` file refreshes sessions and guards the `/dashboard`
-segment, while `app/(dashboard)/layout.tsx` redirects unauthenticated visitors
-to `/login`.
+The `proxy.ts` file verifies the signed session cookie and guards the whole app,
+while `app/(dashboard)/layout.tsx` re-validates the session server-side and
+redirects unauthenticated visitors to `/login`. Signing out posts to
+`/auth/logout`, which clears the cookie and ends the Keycloak SSO session.
 
 ## Forms
 
-Sign-up, sign-in, and profile forms are built with **React Hook Form** and
-**Zod**, sharing schemas from `@repo/validation`. See
-[Validation](/architecture/validation) for the schema layout.
+The profile form is built with **React Hook Form** and **Zod**, sharing schemas
+from `@repo/validation`. Login and registration are handled entirely by
+Keycloak's hosted pages.
 
 <Callout variant="info" title="Coming soon">
   The overview cards currently show placeholders — real organization data will

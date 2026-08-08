@@ -2,8 +2,14 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "globalEnv": [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+    "AUTH_SECRET",
+    "AUTH_URL",
+    "DATABASE_URL",
+    "KEYCLOAK_CLIENT_ID",
+    "KEYCLOAK_CLIENT_SECRET",
+    "KEYCLOAK_REALM",
+    "KEYCLOAK_URL",
+    "NODE_ENV"
   ],
   "tasks": {
     "build": {

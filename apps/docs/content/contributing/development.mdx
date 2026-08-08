@@ -32,7 +32,7 @@ npm run lint --filter=@repo/ui
 - **`cn()` for class merging.** Every component that accepts `className` uses
   `cn()` from `@repo/ui`.
 - **Validation first.** All user input is validated with Zod schemas from
-  `@repo/validation` before touching Supabase.
+  `@repo/validation` before touching the database.
 - **No domain logic in `@repo/ui`.** The design system stays framework and
   auth-agnostic.
 

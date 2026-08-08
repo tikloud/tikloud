@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@repo/supabase/server";
+import { insertWaitlist } from "@repo/db";
 import { waitlistSchema } from "@repo/validation/waitlist";
 
 export type JoinWaitlistResult =
@@ -17,15 +17,13 @@ export async function joinWaitlist(
     return { success: false, error: "Enter a valid email address." };
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("waitlist")
-    .insert({ email: parsed.data.email });
+  try {
+    const result = await insertWaitlist(parsed.data.email);
 
-  if (error) {
-    if (error.code === "23505") {
+    if (!result.success && result.duplicate) {
       return { success: false, error: "You're already on the list." };
     }
+  } catch {
     return { success: false, error: "Something went wrong. Please try again." };
   }
 

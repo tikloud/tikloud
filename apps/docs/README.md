@@ -1,7 +1,7 @@
 # Ti Kloud Docs
 
 The internal documentation site for Ti Kloud. Content is Markdown + MDX stored
-under `content/` and rendered at build time — no Supabase dependency.
+under `content/` and rendered at build time — no backend dependency.
 
 ## Running
 

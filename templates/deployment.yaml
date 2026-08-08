@@ -59,9 +59,28 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $service.env }}
+          {{- $env := list }}
+          {{- range $service.env }}
+          {{- $env = append $env . }}
+          {{- end }}
+          {{- if and $.Values.postgres.enabled (or (eq $service.name "dashboard") (eq $service.name "landing-page")) }}
+          {{- $env = append $env (dict "name" "PGHOST" "value" (include "tikloud.postgresFullname" $)) }}
+          {{- $env = append $env (dict "name" "PGPORT" "value" (($.Values.postgres.service.port | default 5432) | toString)) }}
+          {{- $env = append $env (dict "name" "PGDATABASE" "value" $.Values.postgres.auth.database) }}
+          {{- $env = append $env (dict "name" "PGUSER" "value" $.Values.postgres.auth.username) }}
+          {{- $env = append $env (dict "name" "PGPASSWORD" "valueFrom" (dict "secretKeyRef" (dict "name" (include "tikloud.postgresSecretName" $) "key" ($.Values.postgres.auth.passwordKey | default "password")))) }}
+          {{- end }}
+          {{- if and $.Values.keycloak.enabled (eq $service.name "dashboard") }}
+          {{- $env = append $env (dict "name" "KEYCLOAK_URL" "value" (printf "https://%s" $.Values.keycloak.ingress.host)) }}
+          {{- $env = append $env (dict "name" "KEYCLOAK_REALM" "value" ($.Values.keycloak.realm.name | default "tikloud")) }}
+          {{- $env = append $env (dict "name" "KEYCLOAK_CLIENT_ID" "value" ($.Values.keycloak.realm.client.clientId | default "dashboard")) }}
+          {{- $env = append $env (dict "name" "KEYCLOAK_CLIENT_SECRET" "valueFrom" (dict "secretKeyRef" (dict "name" (include "tikloud.authSecretName" $) "key" "keycloak-client-secret"))) }}
+          {{- $env = append $env (dict "name" "AUTH_SECRET" "valueFrom" (dict "secretKeyRef" (dict "name" (include "tikloud.authSecretName" $) "key" "auth-secret"))) }}
+          {{- $env = append $env (dict "name" "AUTH_URL" "value" (printf "https://%s" $service.ingress.host)) }}
+          {{- end }}
+          {{- if gt (len $env) 0 }}
           env:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml $env | nindent 12 }}
           {{- end }}
           {{- with $service.envFrom }}
           envFrom:

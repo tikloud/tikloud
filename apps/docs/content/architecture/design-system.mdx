@@ -70,7 +70,7 @@ import { Button } from "@repo/ui/button";
    just use it.
 
 <Callout variant="warning" title="Keep the design system clean">
-  `@repo/ui` must stay free of Supabase and domain logic. Dashboard-specific
-  pieces (like sign-out) live in the dashboard and slot into the shared
-  components via props like `Sidebar`'s `footer`.
+  `@repo/ui` must stay free of auth, database, and domain logic.
+  Dashboard-specific pieces (like sign-out) live in the dashboard and slot into
+  the shared components via props like `Sidebar`'s `footer`.
 </Callout>

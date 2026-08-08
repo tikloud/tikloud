@@ -72,9 +72,15 @@ spec:
               value: "true"
             - name: KC_METRICS_ENABLED
               value: "true"
+            - name: KC_IMPORT
+              value: /opt/keycloak/data/import
             {{- with .Values.keycloak.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          volumeMounts:
+            - name: realm-import
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
           {{- with .Values.keycloak.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -93,6 +99,10 @@ spec:
             # start); give the probe generous headroom before it can kill the pod.
             initialDelaySeconds: 180
             periodSeconds: 10
+      volumes:
+        - name: realm-import
+          secret:
+            secretName: {{ include "tikloud.authSecretName" . }}
       {{- with .Values.keycloak.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

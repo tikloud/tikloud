@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-
-import { createClient } from "@repo/supabase/server";
+import { requireUser } from "@repo/auth/server";
+import { getOrCreateProfile, getProfile } from "@repo/db";
 
 import { DashboardSidebar } from "@/components/sidebar";
 
@@ -9,23 +8,15 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await requireUser();
 
-  if (!user) {
-    redirect("/login");
+  let profile = await getProfile(user.sub);
+  if (!profile) {
+    profile = await getOrCreateProfile(user.sub, user.email, user.name);
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name")
-    .eq("id", user.id)
-    .maybeSingle();
-
   const displayName =
-    profile?.display_name ?? user.email?.split("@")[0] ?? "there";
+    profile.display_name ?? user.email?.split("@")[0] ?? "there";
 
   return (
     <div className="flex min-h-screen">

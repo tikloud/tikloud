@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
-    "@repo/supabase": "*",
+    "@repo/db": "*",
     "@repo/ui": "*",
     "@repo/validation": "*",
     "next": "16.3.0",

@@ -1,6 +1,6 @@
 ---
 title: Docker
-description: Build targets, images, and build-time environment variables.
+description: Build targets, images, and runtime environment variables.
 order: 1
 ---
 
@@ -15,31 +15,23 @@ Every app ships as a Docker image built from the root `Dockerfile` via a
 | `tikloud/landing-page` | `runner-landing-page` | 3001 |
 | `tikloud/docs` | `runner-docs` | 3002 |
 
-## Build-time env vars
+## Runtime env vars
 
-`NEXT_PUBLIC_*` variables are inlined at **build time**, so they are passed as
-build args. Supplying empty or missing values bakes empty strings into the
-image and breaks the Supabase auth middleware — the dashboard and landing page
-images **require** both args:
+Keycloak and Postgres credentials are **server-side runtime** variables — they
+are not baked into images. Supply them to `docker run` (or via the Helm chart):
 
 ```bash
-docker build \
-  --target runner-dashboard \
-  -t tikloud/dashboard \
-  --build-arg NEXT_PUBLIC_SUPABASE_URL=... \
-  --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=... \
-  .
+docker build --target runner-dashboard -t tikloud/dashboard .
 
-docker run -p 3000:3000 tikloud/dashboard
+docker run -p 3000:3000 \
+  -e DATABASE_URL=postgresql://tikloud:...@host.docker.internal:5432/tikloud \
+  -e KEYCLOAK_URL=http://host.docker.internal:8080 \
+  -e KEYCLOAK_REALM=tikloud \
+  -e KEYCLOAK_CLIENT_ID=dashboard \
+  -e KEYCLOAK_CLIENT_SECRET=... \
+  -e AUTH_SECRET=... \
+  -e AUTH_URL=http://localhost:3000 \
+  tikloud/dashboard
 ```
 
-`docs` has no Supabase dependency and needs no build args.
-
-## Compose
-
-Run all three together with `docker compose`. Put the two Supabase variables in
-a root `.env` (or export them) and run:
-
-```bash
-docker compose up --build
-```
+`docs` has no backend dependency and needs no environment variables.

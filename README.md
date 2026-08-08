@@ -7,7 +7,8 @@ Monorepo managing all applications for the Ti Kloud organization.
 - **Turborepo** — build orchestration across the monorepo
 - **Next.js** — all web applications (App Router, React 19)
 - **TailwindCSS** — v4, shared tokens via `@repo/ui`
-- **Supabase** — auth, database, and storage (Postgres)
+- **Keycloak** — self-hosted OIDC auth (login, registration, logout)
+- **Postgres** — accessed directly via the `pg` driver
 - **React Hook Form** + **Zod** — form state and schema validation
 - **TypeScript** — strict, shared configs
 
@@ -22,8 +23,10 @@ Monorepo managing all applications for the Ti Kloud organization.
 ## Packages
 
 - `@repo/ui` — design system: Tailwind v4 theme tokens, `cn()`, UI primitives
-- `@repo/supabase` — Supabase client factory (server / browser / middleware)
-- `@repo/validation` — shared Zod schemas (auth, waitlist, profile)
+- `@repo/auth` — Keycloak OIDC client: PKCE login/callback/logout, signed
+  session cookie (`/server` for Node, `/edge` for the route guard)
+- `@repo/db` — Postgres access via `pg` (`profiles`, `waitlist` queries)
+- `@repo/validation` — shared Zod schemas (profile, waitlist)
 - `@repo/eslint-config`, `@repo/typescript-config` — shared lint / TS configs
 
 ## Getting started
@@ -36,16 +39,42 @@ npm run dev:dashboard  # dashboard only
 npm run dev:docs       # docs only
 ```
 
+### Prerequisites
+
+The dashboard authenticates against Keycloak and reads/writes Postgres, so
+local development needs both running:
+
+```sh
+# Postgres (database "tikloud")
+docker run --name tikloud-postgres -e POSTGRES_DB=tikloud \
+  -e POSTGRES_USER=tikloud -e POSTGRES_PASSWORD=tikloud \
+  -p 5432:5432 -d postgres:16
+
+# Keycloak (then create the "tikloud" realm + client in the admin console,
+# or import a realm export; local redirect URI http://localhost:3000/auth/callback)
+docker run --name tikloud-keycloak -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin -e KC_HTTP_PORT=8080 \
+  -p 8080:8080 -d quay.io/keycloak/keycloak:26.7.1 start-dev
+```
+
+Apply the schema to the `tikloud` database:
+
+```sh
+psql "postgresql://tikloud:tikloud@localhost:5432/tikloud" \
+  -f packages/db/migrations/0001_init.sql
+```
+
 ### Environment variables
 
-Supabase credentials live in each app's `.env.local` (gitignored). See
+Runtime credentials live in each app's `.env.local` (gitignored). See
 `apps/<app>/.env.example` for the variable names:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- Dashboard — `KEYCLOAK_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`,
+  `KEYCLOAK_CLIENT_SECRET`, `AUTH_SECRET`, `AUTH_URL`, `DATABASE_URL`
+- Landing page — `DATABASE_URL`
 
-Database schema is versioned as SQL under `supabase/migrations/` — apply via
-the Supabase SQL editor or the Supabase CLI.
+All of these are server-side and read at **runtime** — nothing is baked into
+production images.
 
 ## Commands
 
@@ -67,30 +96,17 @@ using Next.js standalone output for lean production images.
 | `tikloud/landing-page` | `runner-landing-page` | 3001 |
 | `tikloud/docs`         | `runner-docs`         | 3002 |
 
-`NEXT_PUBLIC_*` variables are inlined at **build time**, so pass them as build
-args when the app uses Supabase. Supplying empty or missing values bakes empty
-strings into the image and breaks the Supabase auth middleware — the dashboard
-and landing page images **require** both args:
+No build args are required — Keycloak and Postgres credentials are supplied as
+runtime environment variables by the Helm chart (see `templates/deployment.yaml`):
 
 ```sh
-docker build \
-  --target runner-dashboard \
-  -t tikloud/dashboard \
-  --build-arg NEXT_PUBLIC_SUPABASE_URL=... \
-  --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=... \
-  .
+docker build --target runner-dashboard -t tikloud/dashboard .
 
-docker run -p 3000:3000 tikloud/dashboard
+docker run -p 3000:3000 -e DATABASE_URL=... -e KEYCLOAK_URL=... \
+  -e KEYCLOAK_REALM=tikloud -e KEYCLOAK_CLIENT_ID=dashboard \
+  -e KEYCLOAK_CLIENT_SECRET=... -e AUTH_SECRET=... -e AUTH_URL=http://localhost:3000 \
+  tikloud/dashboard
 ```
-
-Run all three together with compose. Put `NEXT_PUBLIC_SUPABASE_URL` and
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in a root `.env` (or export them) and:
-
-```sh
-docker compose up --build
-```
-
-`docs` has no Supabase dependency and needs no build args.
 
 ### CI
 
@@ -102,6 +118,11 @@ publishes to GHCR:
 - `ghcr.io/tikloud/landing-page`
 - `ghcr.io/tikloud/docs`
 
-The dashboard and landing-page builds require the `NEXT_PUBLIC_SUPABASE_URL`
-and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` repo secrets (Settings → Secrets
-and variables → Actions); the workflow fails if they are unset.
+No secrets are required at build time.
+
+### Kubernetes
+
+The Helm chart at the repo root deploys the apps plus Postgres and Keycloak,
+provisions the Keycloak realm/client and the app schema automatically, and
+injects the runtime credentials into the pods. See
+`apps/docs/content/deployment/kubernetes.mdx` for details.

@@ -12,19 +12,19 @@ const features = [
     icon: KeyRound,
     title: "Authentication built in",
     description:
-      "Sign-up, sign-in, and session management backed by Supabase Auth — no boilerplate.",
+      "Sign-up, sign-in, and session management through Keycloak and OpenID Connect — no boilerplate.",
   },
   {
     icon: Database,
     title: "A database that scales",
     description:
-      "Postgres with row-level security, live schemas, and types generated straight from your tables.",
+      "Postgres, accessed directly with the pg driver through a shared query package.",
   },
   {
     icon: ShieldCheck,
     title: "Secure by default",
     description:
-      "Row-level security policies on every table, publishable keys that stay safe on the client.",
+      "PKCE login flows, signed session cookies, and server-side validation on every action.",
   },
   {
     icon: Zap,
@@ -36,7 +36,7 @@ const features = [
     icon: BarChart3,
     title: "Dashboards that mean business",
     description:
-      "Forms validated with Zod, state handled with React Hook Form, data from Supabase.",
+      "Forms validated with Zod, state handled with React Hook Form, data in Postgres.",
   },
   {
     icon: KeyRound,

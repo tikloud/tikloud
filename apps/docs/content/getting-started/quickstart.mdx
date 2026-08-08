@@ -10,7 +10,8 @@ This page gets the monorepo running on your machine.
 
 - **Node.js** 20.9 or newer
 - **npm** 11.17 or newer
-- **Supabase credentials** if you plan to use the dashboard or landing page
+- **Postgres** and **Keycloak** if you plan to use the dashboard or landing
+  page (see below)
 
 ## Install and run
 
@@ -27,18 +28,50 @@ npm run dev:dashboard  # dashboard only, on :3000
 npm run dev:docs       # docs only, on :3002
 ```
 
+## Local services
+
+The dashboard authenticates against Keycloak and the waitlist writes to
+Postgres, so start both for a full experience:
+
+```bash
+# Postgres (creates the "tikloud" database)
+docker run --name tikloud-postgres -e POSTGRES_DB=tikloud \
+  -e POSTGRES_USER=tikloud -e POSTGRES_PASSWORD=tikloud \
+  -p 5432:5432 -d postgres:16
+
+# Keycloak
+docker run --name tikloud-keycloak -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin -e KC_HTTP_PORT=8080 \
+  -p 8080:8080 -d quay.io/keycloak/keycloak:26.7.1 start-dev
+```
+
+Then create the realm and client in Keycloak's admin console at
+`http://localhost:8080` (`admin` / `admin`):
+
+1. Create realm `tikloud` (enable *Registration*).
+2. Create a confidential client `dashboard` with
+   `http://localhost:3000/auth/callback` as a valid redirect URI.
+3. Copy the client secret into `.env.local`.
+
+Apply the schema to the `tikloud` database:
+
+```bash
+psql "postgresql://tikloud:tikloud@localhost:5432/tikloud" \
+  -f packages/db/migrations/0001_init.sql
+```
+
 ## Environment variables
 
-Supabase credentials live in each app's `.env.local` (gitignored). See
+Runtime credentials live in each app's `.env.local` (gitignored). See
 `apps/<app>/.env.example` for the variable names:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- **Dashboard** — `KEYCLOAK_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`,
+  `KEYCLOAK_CLIENT_SECRET`, `AUTH_SECRET`, `AUTH_URL`, `DATABASE_URL`
+- **Landing page** — `DATABASE_URL`
 
-The **docs** app has no Supabase dependency and needs no environment variables.
+The **docs** app has no backend dependency and needs no environment variables.
 
-The database schema is versioned as SQL under `supabase/migrations/` — apply it
-via the Supabase SQL editor or the Supabase CLI.
+All of these are server-side and read at **runtime**.
 
 ## Useful commands
 

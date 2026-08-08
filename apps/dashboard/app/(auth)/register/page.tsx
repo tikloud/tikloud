@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@repo/ui";
 
-import { RegisterForm } from "@/components/register-form";
+import { CreateAccountButton } from "@/components/create-account-button";
 
 export const metadata: Metadata = {
   title: "Create an account",
@@ -25,7 +25,7 @@ export default function RegisterPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <RegisterForm />
+        <CreateAccountButton />
         <p className="mt-6 text-center text-sm text-slate-500">
           Already have an account?{" "}
           <Link

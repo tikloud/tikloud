@@ -14,20 +14,20 @@ apps/            # the Next.js applications
   docs/          #   documentation (port 3002)
 packages/        # shared libraries
   ui/            #   design system (@repo/ui)
-  supabase/      #   client factory (@repo/supabase)
+  auth/          #   Keycloak OIDC client (@repo/auth)
+  db/            #   Postgres queries (@repo/db)
   validation/    #   Zod schemas (@repo/validation)
   eslint-config/ #   shared ESLint configs
   typescript-config/ # shared tsconfigs
-supabase/        # SQL migrations
 docs/            # agent/engineering documentation
 ```
 
 ## How packages connect
 
-Apps import shared packages by name (`@repo/ui`, `@repo/supabase`, ...). Each
-package's `package.json` `exports` map points directly at source files, and
-TailwindCSS v4 discovers component classes via the `@source` directive in each
-app's `globals.css`.
+Apps import shared packages by name (`@repo/ui`, `@repo/auth`, `@repo/db`,
+...). Each package's `package.json` `exports` map points directly at source
+files, and TailwindCSS v4 discovers component classes via the `@source`
+directive in each app's `globals.css`.
 
 ```
 apps/dashboard/app/globals.css

@@ -1,13 +1,11 @@
 {
-  "name": "@repo/supabase",
+  "name": "@repo/auth",
   "version": "0.0.0",
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./client": "./src/client.ts",
     "./server": "./src/server.ts",
-    "./middleware": "./src/middleware.ts",
-    "./types": "./src/types.ts"
+    "./edge": "./src/edge.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -22,7 +20,7 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.4",
-    "@supabase/supabase-js": "^2.112.2"
+    "jose": "^6.1.1",
+    "openid-client": "^5.7.1"
   }
 }

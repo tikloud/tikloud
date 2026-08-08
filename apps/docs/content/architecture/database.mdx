@@ -1,0 +1,45 @@
+---
+title: Database
+description: Postgres access via the pg driver and the @repo/db package.
+order: 5
+---
+
+The application database is **Postgres**, accessed directly with the `pg`
+driver through a single shared package, `@repo/db`. There is no ORM and no
+server-side abstraction layer — just small typed query helpers on top of a
+connection pool.
+
+## Package
+
+`@repo/db` exposes:
+
+- `getProfile(sub)`, `getOrCreateProfile(sub, email, name)`,
+  `updateDisplayName(sub, name)` — `profiles` queries keyed by the Keycloak
+  `sub` claim.
+- `insertWaitlist(email)` — `waitlist` insert that maps the `23505` unique
+  violation to a "already on the list" result.
+
+```ts
+import { updateDisplayName } from "@repo/db";
+
+await updateDisplayName(user.sub, "Ada Lovelace");
+```
+
+## Pool
+
+A single `pg` `Pool` is created from `DATABASE_URL` (or the `PGHOST`,
+`PGPORT`, `PGUSER`, `PGDATABASE`, `PGPASSWORD` variables). `pg` is listed in
+each app's `serverExternalPackages` so Next.js leaves it external to the
+server bundle.
+
+## Migrations
+
+The schema is versioned as SQL under `packages/db/migrations/`. Apply locally
+with `psql`; in-cluster the chart renders the same statements as a Postgres
+init script (`templates/postgres-schema-init.yaml`) on first boot.
+
+## Security
+
+Row access is enforced in the app from the Keycloak session — there is no
+row-level security in the database. Every query helper takes the user's `sub`
+explicitly, and server actions re-validate the session before touching data.

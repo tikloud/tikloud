@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { createClient } from "@repo/supabase/server";
+import { requireUser } from "@repo/auth/server";
+import { getProfile } from "@repo/db";
 import {
   Card,
   CardContent,
@@ -17,16 +18,8 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name")
-    .eq("id", user?.id ?? "")
-    .maybeSingle();
+  const user = await requireUser();
+  const profile = await getProfile(user.sub);
 
   return (
     <div className="flex flex-col gap-8">
@@ -43,7 +36,7 @@ export default async function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ProfileForm initialName={profile?.display_name ?? ""} />
+          <ProfileForm initialName={profile?.display_name ?? user.name ?? ""} />
         </CardContent>
       </Card>
     </div>

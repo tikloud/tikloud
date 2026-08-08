@@ -97,7 +97,7 @@ spec:
                     SELECT format('CREATE DATABASE %I OWNER %I', :'kc_db', :'kc_user') WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = :'kc_db') \gexec
                     SQL
           {{- end }}
-          {{- if or .Values.postgres.persistence.enabled .Values.keycloak.enabled }}
+          {{- if or .Values.postgres.persistence.enabled .Values.keycloak.enabled .Values.postgres.schema.enabled }}
           volumeMounts:
             {{- if .Values.postgres.persistence.enabled }}
             - name: data
@@ -109,8 +109,14 @@ spec:
               subPath: 01-keycloak.sh
               readOnly: true
             {{- end }}
+            {{- if .Values.postgres.schema.enabled }}
+            - name: tikloud-schema-init
+              mountPath: /docker-entrypoint-initdb.d/02-tikloud-schema.sql
+              subPath: 02-tikloud-schema.sql
+              readOnly: true
+            {{- end }}
           {{- end }}
-      {{- if or (and .Values.postgres.persistence.enabled .Values.postgres.persistence.existingClaim) .Values.keycloak.enabled }}
+      {{- if or (and .Values.postgres.persistence.enabled .Values.postgres.persistence.existingClaim) .Values.keycloak.enabled .Values.postgres.schema.enabled }}
       volumes:
         {{- if and .Values.postgres.persistence.enabled .Values.postgres.persistence.existingClaim }}
         - name: data
@@ -122,6 +128,11 @@ spec:
           configMap:
             name: {{ .Values.keycloak.database.initScriptName | default "keycloak-db-init" }}
             defaultMode: 0755
+        {{- end }}
+        {{- if .Values.postgres.schema.enabled }}
+        - name: tikloud-schema-init
+          configMap:
+            name: {{ .Values.postgres.schema.initScriptName | default "tikloud-schema-init" }}
         {{- end }}
       {{- end }}
       {{- with .Values.postgres.nodeSelector }}

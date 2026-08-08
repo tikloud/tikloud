@@ -1,4 +1,5 @@
-import { createClient } from "@repo/supabase/server";
+import { requireUser } from "@repo/auth/server";
+import { getProfile } from "@repo/db";
 import {
   Badge,
   Card,
@@ -10,13 +11,11 @@ import {
 import { Activity, Database, Users } from "@repo/ui/icons";
 
 export default async function OverviewPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await requireUser();
+  const profile = await getProfile(user.sub);
 
   const displayName =
-    user?.user_metadata.full_name ?? user?.email?.split("@")[0] ?? "there";
+    profile?.display_name ?? user.name ?? user.email?.split("@")[0] ?? "there";
 
   const stats = [
     { label: "Team members", value: "—", icon: Users },

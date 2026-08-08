@@ -55,10 +55,15 @@ into images.
 
 ## Keycloak setup
 
-The Helm chart deploys Keycloak and imports a realm (`tikloud`) with a
-confidential client (`dashboard`) and self-registration enabled on first boot —
-see `templates/auth-secret.yaml`. The admin console is available at the
-Keycloak ingress for any overrides.
+The Helm chart deploys Keycloak and runs a one-shot provisioning Job
+(`templates/keycloak-provision-job.yaml`) that creates the `tikloud` realm and
+the confidential `dashboard` client (with self-registration enabled) via the
+Keycloak admin API. The Job has a stable name, so it runs once per deploy —
+delete it to re-provision. The admin console is available at the Keycloak
+ingress for any overrides.
+
+For local development, create the realm and client by hand in the admin
+console (see [Quickstart](/getting-started/quickstart)).
 
 ## Security
 

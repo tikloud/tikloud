@@ -264,8 +264,6 @@ postgres:
 # When enabled, renders a Deployment, ClusterIP Service, Ingress, Secret with
 # generated admin/database passwords (unless auth.existingSecret is provided),
 # and a Postgres init script that provisions the "keycloak" database + user.
-# The app realm + client are imported automatically on first boot from a
-# realm.json rendered into the auth Secret (see templates/auth-secret.yaml).
 keycloak:
   enabled: true
   replicaCount: 3
@@ -274,9 +272,16 @@ keycloak:
     # Pinned stable release; a mutable tag would leave nodes running stale images.
     tag: "26.7.1"
     pullPolicy: IfNotPresent
+  provisioning:
+    # When enabled, a one-shot Job (templates/keycloak-provision-job.yaml) runs
+    # after deploy and creates the app realm + client via the Keycloak admin
+    # API, using the client secret from the auth Secret. The Job has a stable
+    # name, so it runs once; delete the Job to re-provision.
+    enabled: true
   realm:
     # Realm provisioned for the apps. The dashboard's OpenID Connect client is
-    # imported here; self-registration is delegated to Keycloak's login pages.
+    # created by the provisioning Job; self-registration is delegated to
+    # Keycloak's login pages.
     name: tikloud
     registrationAllowed: true
     client:
@@ -336,10 +341,10 @@ keycloak:
   tolerations: []
   affinity: {}
 
-# Secrets shared by the apps and Keycloak: the session-cookie signing secret,
-# the Keycloak client secret, and the realm import JSON. Rendered by
-# templates/auth-secret.yaml when existingSecret is empty.
+# Secrets shared by the apps and Keycloak: the session-cookie signing secret
+# and the Keycloak client secret. Rendered by templates/auth-secret.yaml when
+# existingSecret is empty.
 auth:
   # Use a pre-existing Secret instead of the generated one. When set, it must
-  # contain the keys auth-secret, keycloak-client-secret, and realm.json.
+  # contain the keys auth-secret and keycloak-client-secret.
   existingSecret: ""
